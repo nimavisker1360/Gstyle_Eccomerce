@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { APP_DESCRIPTION, APP_NAME, APP_SLOGAN } from '@/lib/constants'
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lama Dev E-Commerce Application",
-  description: "A complete e-commerce application with Next.js and Wix",
-};
+  title: {
+    template: `%s | ${APP_NAME}`,
+    default: `${APP_NAME}. ${APP_SLOGAN}`,
+  },
+  description: APP_DESCRIPTION,
+}
 
 export default function RootLayout({
   children,
