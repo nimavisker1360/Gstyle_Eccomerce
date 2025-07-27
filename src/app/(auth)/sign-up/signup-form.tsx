@@ -24,20 +24,12 @@ import { UserSignUpSchema } from "@/lib/validator";
 import { Separator } from "@/components/ui/separator";
 import { APP_NAME } from "@/lib/constants";
 
-const signUpDefaultValues =
-  process.env.NODE_ENV === "development"
-    ? {
-        name: "john doe",
-        email: "john@me.com",
-        password: "123456",
-        confirmPassword: "123456",
-      }
-    : {
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      };
+const signUpDefaultValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 export default function SignUpForm() {
   const searchParams = useSearchParams();
@@ -165,7 +157,12 @@ export default function SignUpForm() {
             )}
           />
           <div>
-            <Button type="submit">Sign Up</Button>
+            <Button
+              type="submit"
+              className="w-full flex items-center justify-center gap-2"
+            >
+              Sign Up
+            </Button>
           </div>
           <div className="text-sm">
             By creating an account, you agree to {APP_NAME}&apos;s{" "}

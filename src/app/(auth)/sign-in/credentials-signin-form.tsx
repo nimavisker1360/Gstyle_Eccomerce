@@ -21,16 +21,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSignInSchema } from "@/lib/validator";
 import { APP_NAME } from "@/lib/constants";
 
-const signInDefaultValues =
-  process.env.NODE_ENV === "development"
-    ? {
-        email: "admin@example.com",
-        password: "123456",
-      }
-    : {
-        email: "",
-        password: "",
-      };
+const signInDefaultValues = {
+  email: "",
+  password: "",
+};
 
 export default function CredentialsSignInForm() {
   const searchParams = useSearchParams();
@@ -148,7 +142,12 @@ export default function CredentialsSignInForm() {
           />
 
           <div>
-            <Button type="submit">Sign In</Button>
+            <Button
+              type="submit"
+              className="w-full flex items-center justify-center gap-2"
+            >
+              Sign In
+            </Button>
           </div>
           <div className="text-sm">
             By signing in, you agree to {APP_NAME}&apos;s{" "}
