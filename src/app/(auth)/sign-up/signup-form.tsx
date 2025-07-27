@@ -62,17 +62,32 @@ export default function SignUpForm() {
         return;
       }
 
-      // Show success message and redirect to sign-in
+      // Automatically sign in the user after successful registration
+      const signInResult = await signInWithCredentials({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signInResult?.error || signInResult?.status === "error") {
+        toast({
+          title: "Success",
+          description: "Account created! Please sign in manually.",
+          variant: "default",
+        });
+        window.location.href = `/sign-in?callbackUrl=${encodeURIComponent(
+          callbackUrl
+        )}`;
+        return;
+      }
+
+      // Successfully signed in, redirect to home
       toast({
         title: "Success",
-        description: "Account created successfully! Please sign in.",
+        description: "Account created and signed in successfully!",
         variant: "default",
       });
 
-      // Redirect to sign-in page
-      window.location.href = `/sign-in?callbackUrl=${encodeURIComponent(
-        callbackUrl
-      )}`;
+      redirect(callbackUrl);
     } catch (error) {
       toast({
         title: "Error",

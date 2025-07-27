@@ -4,7 +4,7 @@ import { IUserSignIn, IUserSignUp } from "@/types";
 import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/db";
 import User from "@/lib/db/models/user.model";
-import { formatError } from '../utils'
+import { formatError } from "../utils";
 
 import bcrypt from "bcryptjs";
 import { UserSignUpSchema } from "../validator";
@@ -18,7 +18,16 @@ export async function signInWithCredentials(user: IUserSignIn) {
     });
 
     console.log("NextAuth signIn result:", result);
-    return result;
+
+    if (result?.error) {
+      return { error: result.error, status: "error" };
+    }
+
+    if (result?.ok) {
+      return { success: true, status: "success" };
+    }
+
+    return { error: "Authentication failed", status: "error" };
   } catch (error) {
     console.error("SignIn error:", error);
     return { error: "Authentication failed", status: "error" };
@@ -67,15 +76,15 @@ export async function registerUser(userSignUp: IUserSignUp) {
       email: userSignUp.email,
       password: userSignUp.password,
       confirmPassword: userSignUp.confirmPassword,
-    })
+    });
 
-    await connectToDatabase()
+    await connectToDatabase();
     await User.create({
       ...user,
       password: await bcrypt.hash(user.password, 5),
-    })
-    return { success: true, message: 'User created successfully' }
+    });
+    return { success: true, message: "User created successfully" };
   } catch (error) {
-    return { success: false, error: formatError(error) }
+    return { success: false, error: formatError(error) };
   }
 }
