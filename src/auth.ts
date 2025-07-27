@@ -38,39 +38,51 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { type: "password" },
       },
       async authorize(credentials) {
-        await connectToDatabase();
-        if (credentials == null) return null;
+        try {
+          console.log("Authorize called with:", credentials?.email);
 
-        const user = await User.findOne({ email: credentials.email });
+          await connectToDatabase();
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Missing credentials");
+            return null;
+          }
 
-        if (user && user.password) {
+          const user = await User.findOne({ email: credentials.email });
+          console.log("User found:", user ? "Yes" : "No");
+
+          if (!user || !user.password) {
+            console.log("User not found or no password");
+            return null;
+          }
+
           const isMatch = await bcrypt.compare(
             credentials.password as string,
             user.password
           );
+          console.log("Password match:", isMatch);
+
           if (isMatch) {
+            console.log("Authentication successful for:", user.email);
             return {
-              id: user._id,
+              id: user._id.toString(),
               name: user.name,
               email: user.email,
               role: user.role,
             };
           }
+
+          console.log("Password does not match");
+          return null;
+        } catch (error) {
+          console.error("Authorize error:", error);
+          return null;
         }
-        return null;
       },
     }),
   ],
   callbacks: {
     jwt: async ({ token, user, trigger, session }) => {
       if (user) {
-        if (!user.name) {
-          await connectToDatabase();
-          await User.findByIdAndUpdate(user.id, {
-            name: user.name || user.email!.split("@")[0],
-            role: "user",
-          });
-        }
         token.name = user.name || user.email!.split("@")[0];
         token.role = (user as { role: string }).role;
       }

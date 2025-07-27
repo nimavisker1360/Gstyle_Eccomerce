@@ -1,5 +1,6 @@
 "use client";
 import { redirect, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { IUserSignIn } from "@/types";
-import { signInWithCredentials } from "@/lib/actions/user.actions";
 
 import { toast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,15 +45,66 @@ export default function CredentialsSignInForm() {
 
   const onSubmit = async (data: IUserSignIn) => {
     try {
-      await signInWithCredentials({
+      console.log("Attempting sign in with:", data.email);
+
+      // First test credentials using our test API
+      const testResponse = await fetch("/api/test-auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const testResult = await testResponse.json();
+      console.log("Test API result:", testResult);
+
+      if (!testResult.success) {
+        toast({
+          title: "Error",
+          description: testResult.error || "Authentication failed",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!testResult.passwordValid) {
+        toast({
+          title: "Error",
+          description: "Invalid password",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // If credentials are valid, attempt NextAuth sign-in
+      const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
+        redirect: false,
       });
-      redirect(callbackUrl);
+
+      console.log("Sign in result:", result);
+
+      if (result?.error) {
+        console.log("Sign in failed:", result.error);
+        toast({
+          title: "Error",
+          description: "NextAuth authentication failed",
+          variant: "destructive",
+        });
+      } else {
+        console.log("Sign in successful, redirecting...");
+        window.location.href = callbackUrl;
+      }
     } catch (error) {
+      console.error("Sign in error:", error);
       toast({
         title: "Error",
-        description: "Invalid email or password",
+        description: "Authentication failed",
         variant: "destructive",
       });
     }
