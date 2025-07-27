@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { APP_DESCRIPTION, APP_NAME, APP_SLOGAN } from '@/lib/constants'
+import { APP_DESCRIPTION, APP_NAME, APP_SLOGAN } from "@/lib/constants";
+import ClientProviders from "@/components/shared/client-providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     default: `${APP_NAME}. ${APP_SLOGAN}`,
   },
   description: APP_DESCRIPTION,
-}
+};
 
 export default function RootLayout({
   children,
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ClientProviders>{children}</ClientProviders>
+      </body>
     </html>
   );
 }
