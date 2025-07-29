@@ -26,22 +26,39 @@ import {
     async function handleSubmit(e: FormEvent) {
       e.preventDefault()
   
-      if (stripe == null || elements == null || email == null) return
+      if (stripe == null || elements == null || email == null) {
+        console.log('Missing required data:', { stripe: !!stripe, elements: !!elements, email })
+        return
+      }
   
       setIsLoading(true)
+      setErrorMessage(undefined)
+      
+      const returnUrl = `${SERVER_URL}/checkout/${orderId}/stripe-payment-success`
+      console.log('Return URL:', returnUrl)
+      
       stripe
         .confirmPayment({
           elements,
           confirmParams: {
-            return_url: `${SERVER_URL}/checkout/${orderId}/stripe-payment-success`,
+            return_url: returnUrl,
           },
         })
         .then(({ error }) => {
-          if (error.type === 'card_error' || error.type === 'validation_error') {
-            setErrorMessage(error.message)
+          if (error) {
+            console.error('Stripe payment error:', error)
+            if (error.type === 'card_error' || error.type === 'validation_error') {
+              setErrorMessage(error.message)
+            } else {
+              setErrorMessage('An unknown error occurred')
+            }
           } else {
-            setErrorMessage('An unknown error occurred')
+            console.log('Payment confirmed successfully')
           }
+        })
+        .catch((error) => {
+          console.error('Unexpected error during payment:', error)
+          setErrorMessage('An unexpected error occurred')
         })
         .finally(() => setIsLoading(false))
     }
