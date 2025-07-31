@@ -17,19 +17,19 @@ export default function CartButton() {
   return (
     <Link href="/cart" className="px-1 header-button">
       <div className="flex items-end text-xs relative">
-        <ShoppingCartIcon className="h-8 w-8" />
+        <ShoppingCartIcon className="h-6 w-6 md:h-8 md:w-8" />
 
         {isMounted && (
           <span
             className={cn(
-              `bg-green-500 w-5 h-5 rounded-full text-white text-xs font-bold absolute right-[30px] top-[-4px] z-10 flex items-center justify-center`,
+              `bg-green-500 w-4 h-4 md:w-5 md:h-5 rounded-full text-white text-xs font-bold absolute right-[20px] md:right-[30px] top-[-2px] md:top-[-4px] z-10 flex items-center justify-center`,
               cartItemsCount >= 10 && "text-xs"
             )}
           >
             {cartItemsCount}
           </span>
         )}
-        <span className="font-bold">سبد خرید</span>
+        <span className="font-bold hidden md:block text-right">سبد خرید</span>
         {isCartSidebarOpen && (
           <div
             className={`absolute top-[20px] right-[-16px] rotate-[-90deg] z-10 w-0 h-0 border-l-[7px] border-r-[7px] border-b-[8px] border-transparent border-b-background`}

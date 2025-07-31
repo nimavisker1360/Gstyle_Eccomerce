@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignOut } from "@/lib/actions/user.actions";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, User } from "lucide-react";
 import Link from "next/link";
 
 export default async function UserButton() {
@@ -21,11 +21,17 @@ export default async function UserButton() {
       <DropdownMenu>
         <DropdownMenuTrigger className="header-button" asChild>
           <div className="flex items-center">
-            <div className="flex flex-col text-xs text-left">
-              <span>سلام، {session ? session.user.name : "ورود"}</span>
+            {/* Mobile version - just icon */}
+            <div className="md:hidden">
+              <User className="h-6 w-6" />
+            </div>
+
+            {/* Desktop version - full text */}
+            <div className="hidden md:flex flex-col text-xs text-right">
+              <span>سلام {session ? session.user.name : "ورود"}</span>
               <span className="font-bold">حساب کاربری و سفارشات</span>
             </div>
-            <ChevronDown />
+            <ChevronDown className="hidden md:block mr-1" />
           </div>
         </DropdownMenuTrigger>
         {session ? (

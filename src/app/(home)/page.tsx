@@ -8,6 +8,7 @@ import {
 } from "@/lib/actions/product.actions";
 import { toSlug } from "@/lib/utils";
 import data from "@/lib/data";
+
 import ProductSlider from "@/components/shared/product/product-slider";
 import BrowsingHistoryList from "@/components/shared/browsing-history-list";
 
@@ -15,6 +16,7 @@ export default async function HomePage() {
   const todaysDeals = await getProductsByTag({ tag: "todays-deal" });
   const bestSellingProducts = await getProductsByTag({ tag: "best-seller" });
   const categories = (await getAllCategories()).slice(0, 4);
+
   const newArrivals = await getProductsForCard({
     tag: "new-arrival",
     limit: 4,

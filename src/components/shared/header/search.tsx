@@ -1,22 +1,6 @@
 import { SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { APP_NAME } from "@/lib/constants";
-const categories = [
-  "مد و پوشاک",
-  "آرایش و زیبایی",
-  "موبایل و کامپیوتر",
-  "اسباب بازی و گجت",
-  "حیوانات خانگی",
-  "ویتامین و دارو",
-];
 export default async function Search() {
   return (
     <form
@@ -26,7 +10,7 @@ export default async function Search() {
     >
       <Input
         className="flex-1 rounded-l-lg rounded-r-none border-gray-300 bg-gray-100 text-gray-800 text-base h-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
-        placeholder="Binlerce market ürünü içinde arayın"
+        placeholder="هزاران محصول مد و پوشاک را جستجو کنید"
         name="q"
         type="search"
       />
