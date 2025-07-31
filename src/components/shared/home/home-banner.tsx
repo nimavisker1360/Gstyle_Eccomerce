@@ -17,7 +17,7 @@ export function HomeBanner() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
-    }, 2000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [bannerImages.length]);
