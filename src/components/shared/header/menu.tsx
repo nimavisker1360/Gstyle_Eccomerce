@@ -1,14 +1,11 @@
-
-import CartButton from './cart-button'
-import UserButton from './user-button'
+import CartButton from "./cart-button";
+import UserButton from "./user-button";
 
 export default function Menu() {
   return (
-    <div className='flex justify-end'>
-      <nav className='flex gap-3 w-full'>
+    <div className="flex items-center gap-6">
       <UserButton />
-        <CartButton />
-      </nav>
+      <CartButton />
     </div>
-  )
+  );
 }

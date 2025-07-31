@@ -1,5 +1,6 @@
-import { auth } from "@/auth";
+"use client";
 
+import { useSession, signOut } from "next-auth/react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,13 +10,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SignOut } from "@/lib/actions/user.actions";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-export default async function UserButton() {
-  const session = await auth();
+export default function UserButtonClient() {
+  const { data: session } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
+
   return (
     <div className="flex gap-2 items-center">
       <DropdownMenu>
@@ -55,14 +60,13 @@ export default async function UserButton() {
               )}
             </DropdownMenuGroup>
             <DropdownMenuItem className="p-0 mb-1">
-              <form action={SignOut} className="w-full">
-                <Button
-                  className="w-full py-4 px-2 h-4 justify-start"
-                  variant="ghost"
-                >
-                  خروج
-                </Button>
-              </form>
+              <Button
+                className="w-full py-4 px-2 h-4 justify-start"
+                variant="ghost"
+                onClick={handleSignOut}
+              >
+                خروج
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         ) : (

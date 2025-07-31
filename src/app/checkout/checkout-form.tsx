@@ -160,11 +160,10 @@ const CheckoutForm = () => {
               className="rounded-full w-full"
               onClick={handleSelectShippingAddress}
             >
-              Ship to this address
+              ارسال به این آدرس
             </Button>
             <p className="text-xs text-center py-2">
-              Choose a shipping address and payment method in order to calculate
-              shipping, handling, and tax.
+              آدرس ارسال و روش پرداخت را انتخاب کنید تا هزینه ارسال، دستمزد و مالیات محاسبه شود.
             </p>
           </div>
         )}
@@ -174,52 +173,49 @@ const CheckoutForm = () => {
               className="rounded-full w-full"
               onClick={handleSelectPaymentMethod}
             >
-              Use this payment method
+              استفاده از این روش پرداخت
             </Button>
 
             <p className="text-xs text-center py-2">
-              Choose a payment method to continue checking out. You&apos;ll
-              still have a chance to review and edit your order before it&apos;s
-              final.
+              روش پرداخت را انتخاب کنید تا ادامه دهید. هنوز فرصت بررسی و ویرایش سفارش خود را قبل از نهایی شدن خواهید داشت.
             </p>
           </div>
         )}
         {isPaymentMethodSelected && isAddressSelected && (
           <div>
             <Button onClick={handlePlaceOrder} className="rounded-full w-full">
-              Place Your Order
+              ثبت سفارش
             </Button>
             <p className="text-xs text-center py-2">
-              By placing your order, you agree to {APP_NAME}&apos;s{" "}
-              <Link href="/page/privacy-policy">privacy notice</Link> and
-              <Link href="/page/conditions-of-use"> conditions of use</Link>.
+              با ثبت سفارش، شما با <Link href="/page/privacy-policy">حریم خصوصی</Link> و
+              <Link href="/page/conditions-of-use"> شرایط استفاده</Link> {APP_NAME} موافقت می‌کنید.
             </p>
           </div>
         )}
 
         <div>
-          <div className="text-lg font-bold">Order Summary</div>
+          <div className="text-lg font-bold">خلاصه سفارش</div>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>Items:</span>
+              <span>محصولات:</span>
               <span>
                 <ProductPrice price={itemsPrice} plain />
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Shipping & Handling:</span>
+              <span>ارسال و دستمزد:</span>
               <span>
                 {shippingPrice === undefined ? (
                   "--"
                 ) : shippingPrice === 0 ? (
-                  "FREE"
+                  "رایگان"
                 ) : (
                   <ProductPrice price={shippingPrice} plain />
                 )}
               </span>
             </div>
             <div className="flex justify-between">
-              <span> Tax:</span>
+              <span> مالیات:</span>
               <span>
                 {taxPrice === undefined ? (
                   "--"
@@ -229,7 +225,7 @@ const CheckoutForm = () => {
               </span>
             </div>
             <div className="flex justify-between  pt-4 font-bold text-lg">
-              <span> Order Total:</span>
+              <span> جمع کل سفارش:</span>
               <span>
                 <ProductPrice price={totalPrice} plain />
               </span>
@@ -249,8 +245,8 @@ const CheckoutForm = () => {
             {isAddressSelected && shippingAddress ? (
               <div className="grid grid-cols-1 md:grid-cols-12    my-3  pb-3">
                 <div className="col-span-5 flex text-lg font-bold ">
-                  <span className="w-8">1 </span>
-                  <span>Shipping address</span>
+                  <span className="w-8">۱ </span>
+                  <span>آدرس ارسال</span>
                 </div>
                 <div className="col-span-5 ">
                   <p>
@@ -268,15 +264,15 @@ const CheckoutForm = () => {
                       setIsDeliveryDateSelected(true);
                     }}
                   >
-                    Change
+                    تغییر
                   </Button>
                 </div>
               </div>
             ) : (
               <>
                 <div className="flex text-primary text-lg font-bold my-2">
-                  <span className="w-8">1 </span>
-                  <span>Enter shipping address</span>
+                  <span className="w-8">۱ </span>
+                  <span>وارد کردن آدرس ارسال</span>
                 </div>
                 <Form {...shippingAddressForm}>
                   <form
@@ -289,7 +285,7 @@ const CheckoutForm = () => {
                     <Card className="md:ml-8 my-4">
                       <CardContent className="p-4 space-y-2">
                         <div className="text-lg font-bold mb-2">
-                          Your address
+                          آدرس شما
                         </div>
 
                         <div className="flex flex-col gap-5 md:flex-row">
@@ -298,10 +294,10 @@ const CheckoutForm = () => {
                             name="fullName"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Full Name</FormLabel>
+                                <FormLabel>نام کامل</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter full name"
+                                    placeholder="نام کامل را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -316,10 +312,10 @@ const CheckoutForm = () => {
                             name="street"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Address</FormLabel>
+                                <FormLabel>آدرس</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter address"
+                                    placeholder="آدرس را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -334,9 +330,9 @@ const CheckoutForm = () => {
                             name="city"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>City</FormLabel>
+                                <FormLabel>شهر</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Enter city" {...field} />
+                                  <Input placeholder="شهر را وارد کنید" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -347,10 +343,10 @@ const CheckoutForm = () => {
                             name="province"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Province</FormLabel>
+                                <FormLabel>استان</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter province"
+                                    placeholder="استان را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -363,10 +359,10 @@ const CheckoutForm = () => {
                             name="country"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Country</FormLabel>
+                                <FormLabel>کشور</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter country"
+                                    placeholder="کشور را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -381,10 +377,10 @@ const CheckoutForm = () => {
                             name="postalCode"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Postal Code</FormLabel>
+                                <FormLabel>کد پستی</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter postal code"
+                                    placeholder="کد پستی را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -397,10 +393,10 @@ const CheckoutForm = () => {
                             name="phone"
                             render={({ field }) => (
                               <FormItem className="w-full">
-                                <FormLabel>Phone number</FormLabel>
+                                <FormLabel>شماره تلفن</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter phone number"
+                                    placeholder="شماره تلفن را وارد کنید"
                                     {...field}
                                   />
                                 </FormControl>
@@ -415,7 +411,7 @@ const CheckoutForm = () => {
                           type="submit"
                           className="rounded-full font-bold"
                         >
-                          Ship to this address
+                          ارسال به این آدرس
                         </Button>
                       </CardFooter>
                     </Card>
@@ -429,8 +425,8 @@ const CheckoutForm = () => {
             {isPaymentMethodSelected && paymentMethod ? (
               <div className="grid  grid-cols-1 md:grid-cols-12  my-3 pb-3">
                 <div className="flex text-lg font-bold  col-span-5">
-                  <span className="w-8">2 </span>
-                  <span>Payment Method</span>
+                  <span className="w-8">۲ </span>
+                  <span>روش پرداخت</span>
                 </div>
                 <div className="col-span-5 ">
                   <p>{paymentMethod}</p>
@@ -443,15 +439,15 @@ const CheckoutForm = () => {
                       if (paymentMethod) setIsDeliveryDateSelected(true);
                     }}
                   >
-                    Change
+                    تغییر
                   </Button>
                 </div>
               </div>
             ) : isAddressSelected ? (
               <>
                 <div className="flex text-primary text-lg font-bold my-2">
-                  <span className="w-8">2 </span>
-                  <span>Choose a payment method</span>
+                  <span className="w-8">۲ </span>
+                  <span>انتخاب روش پرداخت</span>
                 </div>
                 <Card className="md:ml-8 my-4">
                   <CardContent className="p-4">
@@ -480,15 +476,15 @@ const CheckoutForm = () => {
                       onClick={handleSelectPaymentMethod}
                       className="rounded-full font-bold"
                     >
-                      Use this payment method
+                      استفاده از این روش پرداخت
                     </Button>
                   </CardFooter>
                 </Card>
               </>
             ) : (
               <div className="flex text-muted-foreground text-lg font-bold my-4 py-3">
-                <span className="w-8">2 </span>
-                <span>Choose a payment method</span>
+                <span className="w-8">۲ </span>
+                <span>انتخاب روش پرداخت</span>
               </div>
             )}
           </div>
@@ -497,12 +493,12 @@ const CheckoutForm = () => {
             {isDeliveryDateSelected && deliveryDateIndex != undefined ? (
               <div className="grid  grid-cols-1 md:grid-cols-12  my-3 pb-3">
                 <div className="flex text-lg font-bold  col-span-5">
-                  <span className="w-8">3 </span>
-                  <span>Items and shipping</span>
+                  <span className="w-8">۳ </span>
+                  <span>محصولات و ارسال</span>
                 </div>
                 <div className="col-span-5">
                   <p>
-                    Delivery date:{" "}
+                    تاریخ تحویل:{" "}
                     {
                       formatDateTime(
                         calculateFutureDate(
@@ -528,21 +524,21 @@ const CheckoutForm = () => {
                       setIsDeliveryDateSelected(false);
                     }}
                   >
-                    Change
+                    تغییر
                   </Button>
                 </div>
               </div>
             ) : isPaymentMethodSelected && isAddressSelected ? (
               <>
                 <div className="flex text-primary  text-lg font-bold my-2">
-                  <span className="w-8">3 </span>
-                  <span>Review items and shipping</span>
+                  <span className="w-8">۳ </span>
+                  <span>بررسی محصولات و ارسال</span>
                 </div>
                 <Card className="md:ml-8">
                   <CardContent className="p-4">
                     <p className="mb-2">
                       <span className="text-lg font-bold text-green-700">
-                        Arriving{" "}
+                        تحویل در{" "}
                         {
                           formatDateTime(
                             calculateFutureDate(
@@ -552,8 +548,7 @@ const CheckoutForm = () => {
                           ).dateOnly
                         }
                       </span>{" "}
-                      If you order in the next {timeUntilMidnight().hours} hours
-                      and {timeUntilMidnight().minutes} minutes.
+                      اگر در {timeUntilMidnight().hours} ساعت و {timeUntilMidnight().minutes} دقیقه آینده سفارش دهید.
                     </p>
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
@@ -588,7 +583,7 @@ const CheckoutForm = () => {
                               >
                                 <SelectTrigger className="w-24">
                                   <SelectValue>
-                                    Qty: {item.quantity}
+                                    تعداد: {item.quantity}
                                   </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent position="popper">
@@ -600,7 +595,7 @@ const CheckoutForm = () => {
                                     </SelectItem>
                                   ))}
                                   <SelectItem key="delete" value="0">
-                                    Delete
+                                    حذف
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
@@ -610,7 +605,7 @@ const CheckoutForm = () => {
                       </div>
                       <div>
                         <div className=" font-bold">
-                          <p className="mb-2"> Choose a shipping speed:</p>
+                          <p className="mb-2"> سرعت ارسال را انتخاب کنید:</p>
 
                           <ul>
                             <RadioGroup
@@ -648,7 +643,7 @@ const CheckoutForm = () => {
                                       itemsPrice >= dd.freeShippingMinPrice
                                         ? 0
                                         : dd.shippingPrice) === 0 ? (
-                                        "FREE Shipping"
+                                        "ارسال رایگان"
                                       ) : (
                                         <ProductPrice
                                           price={dd.shippingPrice}
@@ -669,8 +664,8 @@ const CheckoutForm = () => {
               </>
             ) : (
               <div className="flex text-muted-foreground text-lg font-bold my-4 py-3">
-                <span className="w-8">3 </span>
-                <span>Items and shipping</span>
+                <span className="w-8">۳ </span>
+                <span>محصولات و ارسال</span>
               </div>
             )}
           </div>
@@ -683,22 +678,22 @@ const CheckoutForm = () => {
               <Card className="hidden md:block ">
                 <CardContent className="p-4 flex flex-col md:flex-row justify-between items-center gap-3">
                   <Button onClick={handlePlaceOrder} className="rounded-full">
-                    Place Your Order
+                    ثبت سفارش
                   </Button>
                   <div className="flex-1">
                     <p className="font-bold text-lg">
-                      Order Total: <ProductPrice price={totalPrice} plain />
+                      جمع کل سفارش: <ProductPrice price={totalPrice} plain />
                     </p>
                     <p className="text-xs">
                       {" "}
-                      By placing your order, you agree to {APP_NAME}&apos;s{" "}
-                      <Link href="/page/privacy-policy">privacy notice</Link>{" "}
-                      and
+                      با ثبت سفارش، شما با {APP_NAME}&apos;s{" "}
+                      <Link href="/page/privacy-policy">حریم خصوصی</Link>{" "}
+                      و
                       <Link href="/page/conditions-of-use">
                         {" "}
-                        conditions of use
+                        شرایط استفاده
                       </Link>
-                      .
+                      موافقت می‌کنید.
                     </p>
                   </div>
                 </CardContent>

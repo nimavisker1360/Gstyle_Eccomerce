@@ -1,5 +1,5 @@
 import { HomeCard } from "@/components/shared/home/home-card";
-import { HomeCarousel } from "@/components/shared/home/home-carousel";
+import { HomeBanner } from "@/components/shared/home/home-banner";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   getAllCategories,
@@ -32,9 +32,9 @@ export default async function HomePage() {
 
   const cards = [
     {
-      title: "Categories to explore",
+      title: "دسته‌بندی‌ها برای کاوش",
       link: {
-        text: "See More",
+        text: "بیشتر ببینید",
         href: "/search",
       },
       items: categories.map((category) => ({
@@ -44,26 +44,26 @@ export default async function HomePage() {
       })),
     },
     {
-      title: "Explore New Arrivals",
+      title: "جدیدترین محصولات را کاوش کنید",
       items: newArrivals,
       link: {
-        text: "View All",
+        text: "مشاهده همه",
         href: "/search?tag=new-arrival",
       },
     },
     {
-      title: "Discover Best Sellers",
+      title: "پرفروش‌ترین‌ها را کشف کنید",
       items: bestSellers,
       link: {
-        text: "View All",
+        text: "مشاهده همه",
         href: "/search?tag=new-arrival",
       },
     },
     {
-      title: "Featured Products",
+      title: "محصولات ویژه",
       items: featureds,
       link: {
-        text: "Shop Now",
+        text: "خرید کنید",
         href: "/search?tag=new-arrival",
       },
     },
@@ -71,27 +71,29 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeCarousel items={data.carousels} />
-      <div className="md:p-4 md:space-y-4 bg-border">
-        <HomeCard cards={cards} />
-        <Card className="w-full rounded-none">
-          <CardContent className="p-4 items-center gap-3">
-            <ProductSlider title={"Today's Deals"} products={todaysDeals} />
-          </CardContent>
-        </Card>
+      <HomeBanner />
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="md:p-4 md:space-y-4 bg-border">
+          <HomeCard cards={cards} />
+          <Card className="w-full rounded-none">
+            <CardContent className="p-4 items-center gap-3">
+              <ProductSlider title={"پیشنهادات امروز"} products={todaysDeals} />
+            </CardContent>
+          </Card>
 
-        <Card className="w-full rounded-none">
-          <CardContent className="p-4 items-center gap-3">
-            <ProductSlider
-              title="Best Selling Products"
-              products={bestSellingProducts}
-              hideDetails
-            />
-          </CardContent>
-        </Card>
-      </div>
-      <div className="p-4 bg-background">
-        <BrowsingHistoryList />
+          <Card className="w-full rounded-none">
+            <CardContent className="p-4 items-center gap-3">
+              <ProductSlider
+                title="پرفروش‌ترین محصولات"
+                products={bestSellingProducts}
+                hideDetails
+              />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="p-4 bg-background">
+          <BrowsingHistoryList />
+        </div>
       </div>
     </>
   );

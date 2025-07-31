@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import CheckoutForm from "./checkout-form";
 
 export const metadata: Metadata = {
-  title: "Checkout",
+  title: "تسویه حساب",
 };
 
 export default async function CheckoutPage() {

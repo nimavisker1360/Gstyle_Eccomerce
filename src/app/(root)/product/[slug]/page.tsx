@@ -23,7 +23,7 @@ export async function generateMetadata(props: {
   const params = await props.params;
   const product = await getProductBySlug(params.slug);
   if (!product) {
-    return { title: "Product not found" };
+    return { title: "محصول یافت نشد" };
   }
   return {
     title: product.name,
@@ -63,7 +63,7 @@ export default async function ProductDetails(props: {
           <div className="flex w-full flex-col gap-2 md:p-5 col-span-2">
             <div className="flex flex-col gap-3">
               <p className="p-medium-16 rounded-full bg-grey-500/10   text-grey-500">
-                Brand {product.brand} {product.category}
+                برند {product.brand} {product.category}
               </p>
               <h1 className="font-bold text-lg lg:text-xl">{product.name}</h1>
               <div className="flex items-center gap-2">
@@ -95,7 +95,7 @@ export default async function ProductDetails(props: {
             </div>
             <Separator className="my-2" />
             <div className="flex flex-col gap-2">
-              <p className="p-bold-20 text-grey-600">Description:</p>
+              <p className="p-bold-20 text-grey-600">توضیحات:</p>
               <p className="p-medium-16 lg:p-regular-18">
                 {product.description}
               </p>
@@ -108,13 +108,13 @@ export default async function ProductDetails(props: {
 
                 {product.countInStock > 0 && product.countInStock <= 3 && (
                   <div className="text-destructive font-bold">
-                    {`Only ${product.countInStock} left in stock - order soon`}
+                    {`فقط ${product.countInStock} عدد باقی مانده - سریع سفارش دهید`}
                   </div>
                 )}
                 {product.countInStock !== 0 ? (
-                  <div className="text-green-700 text-xl">In Stock</div>
+                  <div className="text-green-700 text-xl">موجود است</div>
                 ) : (
-                  <div className="text-destructive text-xl">Out of Stock</div>
+                  <div className="text-destructive text-xl">ناموجود</div>
                 )}
 
                 {product.countInStock !== 0 && (
@@ -143,7 +143,7 @@ export default async function ProductDetails(props: {
       </section>
       <section className="mt-10">
         <h2 className="h2-bold mb-2" id="reviews">
-          Customer Reviews
+          نظرات مشتریان
         </h2>
         <ReviewList product={product} userId={session?.user.id} />
       </section>
@@ -151,7 +151,7 @@ export default async function ProductDetails(props: {
       <section className="mt-10">
         <ProductSlider
           products={relatedProducts.data}
-          title={`Best Sellers in ${product.category}`}
+          title={`پرفروش‌ترین‌ها در ${product.category}`}
         />
       </section>
 
