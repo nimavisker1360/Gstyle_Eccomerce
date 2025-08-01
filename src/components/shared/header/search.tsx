@@ -1,6 +1,6 @@
 import { SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { APP_NAME } from "@/lib/constants";
+
 export default async function Search() {
   return (
     <form
@@ -9,8 +9,8 @@ export default async function Search() {
       className="flex items-stretch h-12 w-full"
     >
       <Input
-        className="flex-1 rounded-l-lg rounded-r-none border-gray-300 bg-gray-100 text-gray-800 text-base h-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
-        placeholder="هزاران محصول مد و پوشاک را جستجو کنید"
+        className="flex-1 rounded-l-lg rounded-r-none border-gray-300 bg-gray-100 text-gray-800 text-opacity-40 placeholder-opacity-30 text-base h-full focus:ring-2 focus:ring-green-500 focus:border-green-500 text-right"
+        placeholder="هزاران محصول  را جستجو کنید"
         name="q"
         type="search"
       />
