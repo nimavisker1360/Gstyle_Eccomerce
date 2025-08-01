@@ -142,18 +142,6 @@ export default function ShoppingProductsGrid({
           <h2 className="text-lg font-semibold">
             نتایج جستجو برای: &quot;{currentSearch}&quot;
           </h2>
-          <p className="text-sm text-gray-600">
-            {products.length} محصول یافت شد
-          </p>
-        </div>
-      )}
-
-      {/* نمایش تعداد محصولات برای صفحه جستجو */}
-      {hideSearchBar && products.length > 0 && (
-        <div className="mb-4">
-          <p className="text-sm text-gray-600 text-center">
-            {products.length} محصول یافت شد
-          </p>
         </div>
       )}
 
@@ -187,6 +175,7 @@ export default function ShoppingProductsGrid({
               key={product.id}
               product={product}
               telegramSupport={telegramSupport}
+              isSearchResult={true}
             />
           ))}
         </div>

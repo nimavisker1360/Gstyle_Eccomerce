@@ -507,9 +507,9 @@ export async function GET(request: NextRequest) {
       search_query: query,
       enhanced_query: enhancedQuery,
       message:
-        enhancedProducts.length > 0
-          ? `${enhancedProducts.length} محصول یافت شد`
-          : "هیچ محصولی یافت نشد. لطفاً کلمات کلیدی دیگری امتحان کنید.",
+        enhancedProducts.length === 0
+          ? "هیچ محصولی یافت نشد. لطفاً کلمات کلیدی دیگری امتحان کنید."
+          : "",
     });
   } catch (error) {
     console.error("❌ Shopping API Error:", error);

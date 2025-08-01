@@ -26,11 +26,13 @@ interface ShoppingProduct {
 interface ShoppingProductCardProps {
   product: ShoppingProduct;
   telegramSupport?: string;
+  isSearchResult?: boolean;
 }
 
 export default function ShoppingProductCard({
   product,
   telegramSupport,
+  isSearchResult = false,
 }: ShoppingProductCardProps) {
   const renderStars = (rating: number) => {
     const stars = [];
@@ -73,7 +75,11 @@ export default function ShoppingProductCard({
     : 0;
 
   return (
-    <Card className="w-full max-w-sm hover:shadow-lg transition-shadow duration-200">
+    <Card
+      className={`w-full max-w-sm hover:shadow-lg transition-shadow duration-200 ${
+        isSearchResult ? "border-2 border-green-500 shadow-green-100" : ""
+      }`}
+    >
       <CardContent className="p-4">
         {/* تصویر محصول */}
         <div className="relative mb-4">
