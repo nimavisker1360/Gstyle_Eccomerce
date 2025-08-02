@@ -20,6 +20,7 @@ export default function Footer() {
       </div>
       <div className='p-4'>
         <div className='flex justify-center  gap-3 text-sm'>
+          <Link href='/categories'>دسته‌بندی‌ها</Link>
           <Link href='/page/conditions-of-use'>شرایط استفاده</Link>
           <Link href='/page/privacy-policy'>حریم خصوصی</Link>
           <Link href='/page/help'>راهنما</Link>

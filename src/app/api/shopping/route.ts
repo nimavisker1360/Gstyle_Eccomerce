@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJson } from "serpapi";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 // Function to extract and validate product links from SERP API
 function extractProductLink(product: any): string | null {
@@ -189,15 +186,14 @@ export async function GET(request: NextRequest) {
           فقط کوئری بهبود یافته را به زبان ترکی برگردانید، بدون توضیح اضافی:
         `;
 
-        const queryCompletion = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: enhancedQueryPrompt }],
-          max_tokens: 100,
+        const { text } = await generateText({
+          model: openai("gpt-3.5-turbo"),
+          prompt: enhancedQueryPrompt,
+          maxOutputTokens: 100,
           temperature: 0.3,
         });
 
-        enhancedQuery =
-          queryCompletion.choices[0]?.message?.content?.trim() || query;
+        enhancedQuery = text.trim() || query;
 
         console.log(`✅ Query enhanced: "${query}" → "${enhancedQuery}"`);
       } catch (error) {
@@ -296,15 +292,14 @@ export async function GET(request: NextRequest) {
                 }
               `;
 
-              const completion = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: translationPrompt }],
-                max_tokens: 200,
+              const { text: response } = await generateText({
+                model: openai("gpt-3.5-turbo"),
+                prompt: translationPrompt,
+                maxOutputTokens: 200,
                 temperature: 0.5,
               });
 
               try {
-                const response = completion.choices[0]?.message?.content;
                 if (response) {
                   // تلاش برای پارس JSON
                   const parsed = JSON.parse(response);
@@ -313,7 +308,6 @@ export async function GET(request: NextRequest) {
                 }
               } catch (parseError) {
                 // اگر JSON پارس نشد، از متن خام استفاده کن
-                const response = completion.choices[0]?.message?.content;
                 if (response && response.length > 20) {
                   persianDescription = response;
                 }

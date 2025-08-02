@@ -13,6 +13,7 @@ interface SearchPageProps {
     q?: string;
     discount?: string;
     view?: string;
+    category?: string;
   };
 }
 
@@ -188,7 +189,7 @@ function SearchResultsSkeleton() {
 }
 
 export default function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q;
+  const query = searchParams.q || searchParams.category;
   const showDiscounts = searchParams.discount === "true";
   const view = searchParams.view;
 

@@ -2,6 +2,7 @@ import { HomeBanner } from "@/components/shared/home/home-banner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ShoppingProductsGrid from "@/components/shared/product/shopping-products-grid";
 import LatestDiscountsSlider from "@/components/shared/product/latest-discounts-slider";
+import CategoriesGrid from "@/components/shared/product/categories-grid";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
@@ -13,6 +14,16 @@ export default async function HomePage() {
       {/* Latest Discounts Section - Now fetches from Google Shopping */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-8">
         <LatestDiscountsSlider />
+      </div>
+
+      {/* Categories Section */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-6">
+          <h2 className="text-2xl text-green-600 text-left">
+            دسته‌بندی‌های محصولات
+          </h2>
+        </div>
+        <CategoriesGrid />
       </div>
 
       <div className="max-w-7xl mx-auto px-6">

@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJson } from "serpapi";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 // قائمة الاستفسارات المختلفة للبحث عن منتجات مخفضة
 const discountQueries = [
@@ -95,14 +92,17 @@ export async function GET(request: NextRequest) {
                   extracted_price: product.extracted_price,
                   extracted_original_price: product.extracted_original_price,
                   price: product.price,
-                  price_range: product.price_range
+                  price_range: product.price_range,
                 });
 
                 // تلاش برای استخراج قیمت از فیلدهای مختلف
                 if (product.extracted_price && product.extracted_price >= 20) {
                   currentPrice = product.extracted_price;
                   console.log(`✅ Using extracted_price: ${currentPrice}`);
-                  if (product.extracted_original_price && product.extracted_original_price > currentPrice) {
+                  if (
+                    product.extracted_original_price &&
+                    product.extracted_original_price > currentPrice
+                  ) {
                     originalPrice = product.extracted_original_price;
                     hasDiscount = true;
                     console.log(`✅ Found original price: ${originalPrice}`);
@@ -111,7 +111,9 @@ export async function GET(request: NextRequest) {
                   // تحليل السعر من النص
                   const priceMatch = product.price.match(/[\d,.]+(\.?\d+)?/);
                   if (priceMatch) {
-                    const parsedPrice = parseFloat(priceMatch[0].replace(",", ""));
+                    const parsedPrice = parseFloat(
+                      priceMatch[0].replace(",", "")
+                    );
                     if (parsedPrice >= 20) {
                       currentPrice = parsedPrice;
                       console.log(`✅ Using parsed price: ${currentPrice}`);
@@ -125,19 +127,27 @@ export async function GET(request: NextRequest) {
 
                 // اگر قیمت منطقی پیدا نشد، قیمت تقریبی تولید کن
                 if (currentPrice < 20) {
-                  console.log(`🔧 Generating fallback price for: ${product.title}`);
+                  console.log(
+                    `🔧 Generating fallback price for: ${product.title}`
+                  );
                   // تولید قیمت تصادفی منطقی بین 25 تا 500 لیر
                   currentPrice = Math.floor(Math.random() * 475) + 25;
-                  
+
                   // تولید قیمت اصلی با تخفیف 10-40 درصد
                   const discountPercent = Math.floor(Math.random() * 30) + 10;
-                  originalPrice = Math.round(currentPrice / (1 - discountPercent / 100));
+                  originalPrice = Math.round(
+                    currentPrice / (1 - discountPercent / 100)
+                  );
                   hasDiscount = true;
-                  console.log(`🔧 Generated prices: ${currentPrice} TRY (was ${originalPrice} TRY, ${discountPercent}% off)`);
+                  console.log(
+                    `🔧 Generated prices: ${currentPrice} TRY (was ${originalPrice} TRY, ${discountPercent}% off)`
+                  );
                 }
 
-                console.log(`💰 Final prices: Current: ${currentPrice} TRY, Original: ${originalPrice} TRY`);
-                console.log(`---`)
+                console.log(
+                  `💰 Final prices: Current: ${currentPrice} TRY, Original: ${originalPrice} TRY`
+                );
+                console.log(`---`);
 
                 // إنشاء رابط Google Shopping
                 let googleShoppingLink = "";
@@ -160,15 +170,14 @@ export async function GET(request: NextRequest) {
                     أجب فقط بالعنوان المترجم دون تفسيرات إضافية:
                   `;
 
-                    const completion = await openai.chat.completions.create({
-                      model: "gpt-3.5-turbo",
-                      messages: [{ role: "user", content: translationPrompt }],
-                      max_tokens: 50,
+                    const { text } = await generateText({
+                      model: openai("gpt-3.5-turbo"),
+                      prompt: translationPrompt,
+                      maxOutputTokens: 50,
                       temperature: 0.3,
                     });
 
-                    const translatedTitle =
-                      completion.choices[0]?.message?.content?.trim();
+                    const translatedTitle = text.trim();
                     if (translatedTitle && translatedTitle.length > 5) {
                       persianTitle = translatedTitle;
                     }

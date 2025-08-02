@@ -160,7 +160,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
   }
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl text-green-600 text-right">آخرین تخفیف‌ها</h2>
