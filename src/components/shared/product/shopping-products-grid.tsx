@@ -25,15 +25,17 @@ interface ShoppingProduct {
 }
 
 interface ShoppingProductsGridProps {
-  telegramSupport: string;
+  telegramSupport?: string;
   initialQuery?: string;
   hideSearchBar?: boolean;
+  allowEmpty?: boolean;
 }
 
 export default function ShoppingProductsGrid({
   telegramSupport,
   initialQuery,
   hideSearchBar = false,
+  allowEmpty = false,
 }: ShoppingProductsGridProps) {
   const [products, setProducts] = useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,9 +108,106 @@ export default function ShoppingProductsGrid({
     }
   }, [initialQuery]);
 
-  // اگر هیچ query اولیه‌ای وجود نداشته باشد، هیچ محصولی نمایش نده
-  if (!initialQuery || !initialQuery.trim()) {
+  // اگر هیچ query اولیه‌ای وجود نداشته باشد و allowEmpty false باشد، هیچ محصولی نمایش نده
+  if ((!initialQuery || !initialQuery.trim()) && !allowEmpty) {
     return null;
+  }
+
+  // اگر allowEmpty true باشد، همیشه کامپوننت را نمایش بده
+  if (allowEmpty) {
+    return (
+      <div className="w-full">
+        {/* نوار جستجو - فقط اگر پنهان نباشد */}
+        {!hideSearchBar && (
+          <div className="mb-6">
+            <form onSubmit={handleSubmit} className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="جستجوی محصولات از ترکیه..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1"
+                dir="rtl"
+              />
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+              </Button>
+            </form>
+          </div>
+        )}
+
+        {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد */}
+        {currentSearch && (
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">
+              نتایج جستجو برای: &quot;{currentSearch}&quot;
+            </h2>
+          </div>
+        )}
+
+        {/* پیام خطا */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            {error}
+          </div>
+        )}
+
+        {/* پیام اطلاعات */}
+        {message && !error && (
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+            {message}
+          </div>
+        )}
+
+        {/* لودینگ */}
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin" />
+            <span className="mr-2">در حال جستجو...</span>
+          </div>
+        )}
+
+        {/* گرید محصولات */}
+        {!loading && products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ShoppingProductCard
+                key={product.id}
+                product={product}
+                telegramSupport={telegramSupport || "@gstyle_support"}
+                isSearchResult={true}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* پیام عدم وجود نتیجه */}
+        {!loading && products.length === 0 && currentSearch && !error && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              هیچ محصولی برای &quot;{currentSearch}&quot; یافت نشد.
+            </p>
+            <p className="text-gray-400 text-sm mt-2">
+              لطفاً کلمات کلیدی دیگری امتحان کنید.
+            </p>
+            <div className="mt-4 text-sm text-gray-400">
+              <p>پیشنهادات جستجو:</p>
+              <ul className="mt-2 space-y-1">
+                <li>• لباس زنانه</li>
+                <li>• کفش ورزشی</li>
+                <li>• لوازم آرایشی</li>
+                <li>• ساعت مچی</li>
+                <li>• کیف دستی</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -136,8 +235,8 @@ export default function ShoppingProductsGrid({
         </div>
       )}
 
-      {/* نتایج جستجو - فقط اگر نوار جستجو نمایش داده می‌شود */}
-      {!hideSearchBar && currentSearch && (
+      {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد */}
+      {currentSearch && (
         <div className="mb-4">
           <h2 className="text-lg font-semibold">
             نتایج جستجو برای: &quot;{currentSearch}&quot;
@@ -174,7 +273,7 @@ export default function ShoppingProductsGrid({
             <ShoppingProductCard
               key={product.id}
               product={product}
-              telegramSupport={telegramSupport}
+              telegramSupport={telegramSupport || "@gstyle_support"}
               isSearchResult={true}
             />
           ))}

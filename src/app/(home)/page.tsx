@@ -1,6 +1,7 @@
 import { HomeBanner } from "@/components/shared/home/home-banner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ShoppingProductsGrid from "@/components/shared/product/shopping-products-grid";
+import LatestDiscountsSlider from "@/components/shared/product/latest-discounts-slider";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
@@ -8,6 +9,12 @@ export default async function HomePage() {
   return (
     <>
       <HomeBanner />
+
+      {/* Latest Discounts Section - Now fetches from Google Shopping */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-8">
+        <LatestDiscountsSlider />
+      </div>
+
       <div className="max-w-7xl mx-auto px-6">
         <div className="md:p-4 md:space-y-4 bg-border">
           {/* <Card className="w-full rounded-none">

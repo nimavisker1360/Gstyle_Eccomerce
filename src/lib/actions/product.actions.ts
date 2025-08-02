@@ -91,3 +91,40 @@ export async function getProductsByTag({
     .limit(limit);
   return JSON.parse(JSON.stringify(products)) as IProduct[];
 }
+
+// GET LATEST DISCOUNTED PRODUCTS FROM EACH BRAND
+export async function getLatestDiscountedProducts(limit = 50) {
+  await connectToDatabase();
+
+  // Get all brands first
+  const brands = await Product.find({ isPublished: true }).distinct("brand");
+
+  // Calculate how many products per brand (approximately)
+  const productsPerBrand = Math.ceil(limit / brands.length);
+
+  // Get latest discounted products from each brand
+  const brandPromises = brands.map(async (brand) => {
+    return await Product.find({
+      brand,
+      isPublished: true,
+      $expr: { $lt: ["$price", "$listPrice"] }, // Products with discount (price < listPrice)
+    })
+      .sort({ createdAt: "desc" })
+      .limit(productsPerBrand);
+  });
+
+  const brandResults = await Promise.all(brandPromises);
+
+  // Flatten and shuffle results, then limit to total
+  const allProducts = brandResults.flat();
+
+  // Sort by creation date and limit to requested amount
+  const sortedProducts = allProducts
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, limit);
+
+  return JSON.parse(JSON.stringify(sortedProducts)) as IProduct[];
+}
