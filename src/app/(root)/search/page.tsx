@@ -69,10 +69,50 @@ function DiscountProductsContent({ searchQuery }: { searchQuery?: string }) {
 
 function SearchResultsSkeleton() {
   return (
-    <div className="flex justify-center items-center py-12">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-        <p className="text-blue-600 text-sm">در حال جستجو...</p>
+    <div className="w-full bg-white">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl text-green-600 text-left hidden">
+          نتایج جستجو
+        </h2>
+      </div>
+
+      {/* Beautiful Loading Animation */}
+      <div className="flex flex-col items-center justify-center py-8 mb-6">
+        <div className="relative">
+          {/* Main loading spinner */}
+          <div className="w-12 h-12 border-4 border-green-100 border-t-4 border-t-green-500 rounded-full animate-spin"></div>
+
+          {/* Inner spinner */}
+          <div
+            className="absolute top-1.5 left-1.5 w-9 h-9 border-4 border-blue-100 border-t-4 border-t-blue-500 rounded-full animate-spin"
+            style={{
+              animationDirection: "reverse",
+              animationDuration: "1.5s",
+            }}
+          ></div>
+        </div>
+
+        {/* Loading text with typewriter effect */}
+        <div className="mt-4 text-center">
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            جستجوی بهترین محصولات...
+          </h3>
+          <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"></div>
+            <div
+              className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"
+              style={{ animationDelay: "0.1s" }}
+            ></div>
+            <div
+              className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"
+              style={{ animationDelay: "0.2s" }}
+            ></div>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            از گوگل شاپینگ در حال پیدا کردن محصولات...
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -104,9 +144,11 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <>
       <HomeBanner />
-      <Suspense fallback={<SearchResultsSkeleton />}>
-        <SearchResultsContent query={query} />
-      </Suspense>
+      <div className="py-8">
+        <Suspense fallback={<SearchResultsSkeleton />}>
+          <SearchResultsContent query={query} />
+        </Suspense>
+      </div>
     </>
   );
 }

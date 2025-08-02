@@ -140,34 +140,67 @@ export default function ShoppingProductsGrid({
           </div>
         )}
 
-        {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد */}
-        {currentSearch && (
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold">
-              نتایج جستجو برای: &quot;{currentSearch}&quot;
-            </h2>
+        {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد و در حال لودینگ نباشد */}
+        {currentSearch && !loading && (
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 shadow-sm border border-green-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <h2 className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                    نتایج جستجو برای:
+                  </h2>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-lg font-semibold text-gray-800 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+                    &quot;{currentSearch}&quot;
+                  </span>
+                </div>
+              </div>
+              <div className="mt-4 h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 rounded-full"></div>
+            </div>
           </div>
         )}
 
         {/* پیام خطا */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
           </div>
         )}
 
         {/* پیام اطلاعات */}
         {message && !error && (
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
             {message}
           </div>
         )}
 
         {/* لودینگ */}
         {loading && (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin" />
-            <span className="mr-2">در حال جستجو...</span>
+          <div className="w-full bg-white">
+            {/* Simple Loading Header */}
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-gray-700 mb-4">
+                  جستجوی بهترین محصولات
+                </h3>
+                <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse mb-4">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+                  <div
+                    className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-500">
+                  لطفا صبر کنید، داریم بهترین محصولات رو پیدا می‌کنیم
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -235,34 +268,67 @@ export default function ShoppingProductsGrid({
         </div>
       )}
 
-      {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد */}
-      {currentSearch && (
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold">
-            نتایج جستجو برای: &quot;{currentSearch}&quot;
-          </h2>
+      {/* نتایج جستجو - فقط اگر جستجویی انجام شده باشد و در حال لودینگ نباشد */}
+      {currentSearch && !loading && (
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 shadow-sm border border-green-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <h2 className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                  نتایج جستجو برای:
+                </h2>
+              </div>
+              <div className="flex items-center ">
+                <span className="text-lg font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500">
+                  {currentSearch}
+                </span>
+              </div>
+            </div>
+            <div className="mt-4 h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 rounded-full"></div>
+          </div>
         </div>
       )}
 
       {/* پیام خطا */}
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           {error}
         </div>
       )}
 
       {/* پیام اطلاعات */}
       {message && !error && (
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
+        <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
           {message}
         </div>
       )}
 
       {/* لودینگ */}
       {loading && (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <span className="mr-2">در حال جستجو...</span>
+        <div className="w-full bg-white">
+          {/* Simple Loading Header */}
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-gray-700 mb-4">
+                جستجوی بهترین محصولات
+              </h3>
+              <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse mb-4">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+                <div
+                  className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                  style={{ animationDelay: "0.1s" }}
+                ></div>
+                <div
+                  className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
+              </div>
+              <p className="text-sm text-gray-500">
+                لطفا صبر کنید، داریم بهترین محصولات رو پیدا می‌کنیم
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
