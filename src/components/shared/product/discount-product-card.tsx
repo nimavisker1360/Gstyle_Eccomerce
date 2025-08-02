@@ -3,11 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Star, ExternalLink } from "lucide-react";
+import { Star, Plus } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import useCartStore from "@/hooks/use-cart-store";
+import { generateId, round2 } from "@/lib/utils";
 
 interface ShoppingProduct {
   id: string;
@@ -32,6 +35,9 @@ interface DiscountProductCardProps {
 }
 
 const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
+  const { toast } = useToast();
+  const { addItem } = useCartStore();
+
   // Calculate discount percentage
   const discountPercent =
     product.originalPrice && product.originalPrice > product.price
@@ -65,6 +71,34 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
   const priceInTRY = product.price;
   const originalPriceInTRY = product.originalPrice;
 
+  const handleAddToCart = () => {
+    try {
+      const cartItem = {
+        clientId: generateId(),
+        product: product.id,
+        size: "متوسط", // Default size
+        color: "مشکی", // Default color
+        countInStock: 10, // Default stock
+        name: product.title,
+        slug: product.id,
+        category: "تخفیف‌دار",
+        price: round2(priceInTRY),
+        quantity: 1,
+        image: product.image,
+      };
+
+      addItem(cartItem, 1);
+      toast({
+        description: "به سبد خرید اضافه شد",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        description: error.message,
+      });
+    }
+  };
+
   return (
     <Card className="w-full max-w-[280px] hover:shadow-lg transition-shadow duration-200 bg-white">
       <CardContent className="p-4">
@@ -89,23 +123,15 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
             ٪{discountPercent}
           </Badge>
 
-          {/* External Link Button */}
+          {/* Add to Cart Button */}
           <div className="absolute top-2 right-2">
-            {product.googleShoppingLink && (
-              <Button
-                size="sm"
-                className="bg-green-500 hover:bg-green-600 text-white p-2 h-8 w-8"
-                asChild
-              >
-                <Link
-                  href={product.googleShoppingLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                </Link>
-              </Button>
-            )}
+            <Button
+              size="sm"
+              className="bg-green-500 hover:bg-green-600 text-white p-2 h-8 w-8 rounded-full"
+              onClick={handleAddToCart}
+            >
+              <Plus className="w-3 h-3" />
+            </Button>
           </div>
         </div>
 
@@ -175,7 +201,7 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
                 rel="noopener noreferrer"
               >
                 مشاهده در فروشگاه
-                <ExternalLink className="w-3 h-3 mr-1" />
+                {/* <ExternalLink className="w-3 h-3 mr-1" /> */}
               </Link>
             </Button>
           ) : (
