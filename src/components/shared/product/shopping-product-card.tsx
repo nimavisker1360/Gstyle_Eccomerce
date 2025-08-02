@@ -3,7 +3,15 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, ExternalLink, MessageCircle, ShoppingCart } from "lucide-react";
+import {
+  Star,
+  ExternalLink,
+  MessageCircle,
+  ShoppingCart,
+  Plus,
+} from "lucide-react";
+import useCartStore from "@/hooks/use-cart-store";
+import { OrderItem } from "@/types";
 
 interface ShoppingProduct {
   id: string;
@@ -34,6 +42,33 @@ export default function ShoppingProductCard({
   telegramSupport,
   isSearchResult = false,
 }: ShoppingProductCardProps) {
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = async () => {
+    try {
+      const orderItem: OrderItem = {
+        clientId: `${product.id}-${Date.now()}`, // Unique client ID
+        product: product.id,
+        name: product.title,
+        slug: product.title.toLowerCase().replace(/\s+/g, "-"),
+        category: "general", // Default category since shopping products don't have categories
+        quantity: 1,
+        countInStock: 99, // Default stock since shopping products don't have stock info
+        image: product.image,
+        price: product.price,
+        size: undefined,
+        color: undefined,
+      };
+
+      await addItem(orderItem, 1);
+
+      // Optional: Show a success message or toast
+      console.log("محصول با موفقیت به سبد خرید اضافه شد:", product.title);
+    } catch (error) {
+      console.error("خطا در اضافه کردن به سبد خرید:", error);
+      // Optional: Show error message to user
+    }
+  };
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -42,17 +77,17 @@ export default function ShoppingProductCard({
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <Star
             key={i}
-            className="w-4 h-4 fill-yellow-400 text-yellow-400 opacity-50"
+            className="w-3 h-3 fill-yellow-400 text-yellow-400 opacity-50"
           />
         );
       } else {
-        stars.push(<Star key={i} className="w-4 h-4 text-gray-300" />);
+        stars.push(<Star key={i} className="w-3 h-3 text-gray-300" />);
       }
     }
     return stars;
@@ -76,129 +111,124 @@ export default function ShoppingProductCard({
 
   return (
     <Card
-      className={`w-full max-w-sm hover:shadow-lg transition-shadow duration-200 ${
+      className={`w-full max-w-[200px] hover:shadow-lg transition-shadow duration-200 ${
         isSearchResult ? "border-2 border-green-500 shadow-green-100" : ""
       }`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3 flex flex-col">
         {/* تصویر محصول */}
-        <div className="relative mb-4">
+        <div className="relative mb-2">
           <Image
             src={product.image || "/images/placeholder.jpg"}
             alt={product.title}
-            width={300}
-            height={300}
-            className="w-full h-48 object-cover rounded-lg"
+            width={200}
+            height={100}
+            className="w-full h-20 object-cover rounded-lg"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = "/images/placeholder.jpg";
             }}
           />
           {hasDiscount && (
-            <Badge className="absolute top-2 right-2 bg-red-500 text-white">
+            <Badge className="absolute top-1 left-1 bg-red-500 text-white text-xs">
               {discountPercentage}% تخفیف
             </Badge>
           )}
+
+          {/* دکمه اضافه به سبد خرید */}
+          <button
+            onClick={handleAddToCart}
+            className="absolute top-1 right-1 w-6 h-6 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors duration-200 shadow-md"
+            title="اضافه به سبد خرید"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
         </div>
 
         {/* نام فروشگاه */}
-        <p className="text-xs text-gray-600 mb-2 font-medium">
+        <p className="text-xs text-blue-600 mb-1 font-medium">
           {product.source}
         </p>
 
         {/* عنوان محصول */}
-        <h3 className="font-semibold text-sm mb-2 line-clamp-2 min-h-[2.5rem]">
+        <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
           {product.title}
         </h3>
 
-        {/* امتیاز و تعداد نظرات */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex">{renderStars(product.rating)}</div>
-          <span className="text-sm text-gray-600">({product.reviews})</span>
-        </div>
-
-        {/* قیمت */}
-        <div className="mb-3">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-lg font-bold text-green-700">
-              {formatPrice(product.price, product.currency)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm text-gray-500 line-through">
-                {formatPrice(product.originalPrice!, product.currency)}
-              </span>
-            )}
-          </div>
-          {/* نام فروشگاه در کنار قیمت */}
-          <p className="text-xs text-blue-600 font-medium">
-            📍 {product.source}
-          </p>
-        </div>
-
         {/* توضیحات */}
-        <p className="text-xs text-gray-700 mb-4 line-clamp-3 min-h-[3rem]">
+        <p className="text-xs text-gray-600 mb-2 line-clamp-2 h-8">
           {product.description}
         </p>
 
-        {/* ارسال */}
-        <p className="text-xs text-green-600 mb-4">📦 {product.delivery}</p>
+        {/* قیمت */}
+        <div className="mb-2">
+          <span className="text-base font-bold text-green-700 block">
+            {formatPrice(product.price, product.currency)}
+          </span>
+          {hasDiscount && (
+            <span className="text-xs text-gray-500 line-through">
+              {formatPrice(product.originalPrice!, product.currency)}
+            </span>
+          )}
+        </div>
 
-        {/* دکمه‌ها */}
-        <div className="flex flex-col gap-2">
-          {/* دکمه اصلی - همیشه به فروشگاه اصلی */}
+        {/* دکمه خرید */}
+        <div>
           {product.link ? (
             <Button
               asChild
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 hover:bg-green-700 text-white mb-1 h-8"
               size="sm"
             >
               <Link
                 href={product.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
+                className="flex items-center justify-center gap-1 text-xs"
               >
-                <ShoppingCart className="w-4 h-4" />
-                {`خرید از ${product.source}`}
+                <ShoppingCart className="w-3 h-3" />
+                خرید از {product.source}
               </Link>
             </Button>
           ) : (
             <Button
-              asChild
-              className="w-full bg-gray-500 hover:bg-gray-600 text-white"
+              className="w-full bg-gray-500 text-white mb-1 h-8"
               size="sm"
               disabled
             >
-              <span className="flex items-center justify-center gap-2">
-                <ShoppingCart className="w-4 h-4" />
-                لینک فروشگاه موجود نیست
+              <span className="flex items-center justify-center text-xs">
+                ناموجود
               </span>
             </Button>
           )}
 
           {/* دکمه‌های ثانویه */}
-          <div className="grid grid-cols-2 gap-2">
-            {/* دکمه مقایسه قیمت - فقط اگر لینک گوگل موجود باشد */}
+          <div className="grid grid-cols-2 gap-1">
+            {/* دکمه مقایسه قیمت */}
             {product.googleShoppingLink && (
-              <Button asChild variant="outline" className="w-full" size="sm">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full h-7"
+                size="sm"
+              >
                 <Link
                   href={product.googleShoppingLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1"
+                  className="flex items-center justify-center text-xs"
                 >
-                  <ExternalLink className="w-3 h-3" />
                   مقایسه قیمت
                 </Link>
               </Button>
             )}
 
-            {/* دکمه تلگرام */}
+            {/* دکمه پشتیبانی */}
             {telegramSupport && (
               <Button
                 asChild
                 variant="secondary"
-                className={`w-full ${
+                className={`w-full h-7 ${
                   product.googleShoppingLink ? "" : "col-span-2"
                 }`}
                 size="sm"
@@ -207,9 +237,8 @@ export default function ShoppingProductCard({
                   href={`https://t.me/${telegramSupport.replace("@", "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1"
+                  className="flex items-center justify-center text-xs"
                 >
-                  <MessageCircle className="w-3 h-3" />
                   پشتیبانی
                 </Link>
               </Button>

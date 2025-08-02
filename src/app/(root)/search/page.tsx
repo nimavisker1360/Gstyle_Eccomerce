@@ -1,8 +1,12 @@
+"use client";
+
 import { Suspense } from "react";
 import SearchProductsLayout from "@/components/shared/product/search-products-layout";
 import AllProductsView from "@/components/shared/product/all-products-view";
 import { HomeBanner } from "@/components/shared/home/home-banner";
 import DiscountProductsGrid from "@/components/shared/product/discount-products-grid";
+import SearchSidebar from "@/components/shared/product/search-sidebar";
+import MobileFilterButton from "@/components/shared/product/mobile-filter-button";
 
 interface SearchPageProps {
   searchParams: {
@@ -21,27 +25,70 @@ function SearchResultsContent({
 }) {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
+  const handleFilterChange = (filters: any) => {
+    console.log("Filters changed:", filters);
+    // Handle filter changes here
+  };
+
   // اگر view=all باشد، از کامپوننت AllProductsView استفاده کن
   if (view === "all") {
     return (
-      <div className="max-w-7xl mx-auto px-6">
-        <AllProductsView
-          telegramSupport={telegramSupport}
-          initialQuery={query}
-          hideSearchBar={true}
-        />
+      <div className="flex flex-col lg:flex-row">
+        {/* Sidebar - Hidden on mobile, visible on desktop */}
+        <div className="hidden lg:block">
+          <SearchSidebar
+            currentQuery={query}
+            totalProducts={0} // This would come from API
+            onFilterChange={handleFilterChange}
+          />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 px-4">
+          {/* Mobile Filter Button */}
+          <MobileFilterButton
+            currentQuery={query}
+            totalProducts={0}
+            onFilterChange={handleFilterChange}
+          />
+
+          <AllProductsView
+            telegramSupport={telegramSupport}
+            initialQuery={query}
+            hideSearchBar={true}
+          />
+        </div>
       </div>
     );
   }
 
   // در غیر این صورت، از کامپوننت معمولی استفاده کن
   return (
-    <div className="max-w-7xl mx-auto px-6">
-      <SearchProductsLayout
-        telegramSupport={telegramSupport}
-        initialQuery={query}
-        hideSearchBar={true}
-      />
+    <div className="flex flex-col lg:flex-row">
+      {/* Sidebar - Hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block">
+        <SearchSidebar
+          currentQuery={query}
+          totalProducts={0} // This would come from API
+          onFilterChange={handleFilterChange}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 px-4">
+        {/* Mobile Filter Button */}
+        <MobileFilterButton
+          currentQuery={query}
+          totalProducts={0}
+          onFilterChange={handleFilterChange}
+        />
+
+        <SearchProductsLayout
+          telegramSupport={telegramSupport}
+          initialQuery={query}
+          hideSearchBar={true}
+        />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Star, Plus } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,6 +37,7 @@ interface DiscountProductCardProps {
 const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
   const { toast } = useToast();
   const { addItem } = useCartStore();
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Calculate discount percentage
   const discountPercent =
@@ -88,6 +89,7 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
       };
 
       addItem(cartItem, 1);
+      setIsAddedToCart(true);
       toast({
         description: "به سبد خرید اضافه شد",
       });
@@ -188,28 +190,30 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
           )}
         </div>
 
-        {/* Action Button */}
-        <div className="mt-3">
-          {product.googleShoppingLink ? (
-            <Button
-              className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white"
-              asChild
-            >
-              <Link
-                href={product.googleShoppingLink}
-                target="_blank"
-                rel="noopener noreferrer"
+        {/* Action Button - Hide when added to cart */}
+        {!isAddedToCart && (
+          <div className="mt-3">
+            {product.googleShoppingLink ? (
+              <Button
+                className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white"
+                asChild
               >
-                مشاهده در فروشگاه
-                {/* <ExternalLink className="w-3 h-3 mr-1" /> */}
-              </Link>
-            </Button>
-          ) : (
-            <Button className="w-full text-sm" disabled>
-              نا موجود
-            </Button>
-          )}
-        </div>
+                <Link
+                  href={product.googleShoppingLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  مشاهده در فروشگاه
+                  {/* <ExternalLink className="w-3 h-3 mr-1" /> */}
+                </Link>
+              </Button>
+            ) : (
+              <Button className="w-full text-sm" disabled>
+                نا موجود
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

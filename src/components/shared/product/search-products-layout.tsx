@@ -6,13 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Search, Loader2, ChevronRight } from "lucide-react";
 import ShoppingProductCard from "./shopping-product-card";
 import Link from "next/link";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 interface ShoppingProduct {
   id: string;
@@ -121,20 +114,13 @@ export default function SearchProductsLayout({
     return null;
   }
 
-  // محصولات اولیه (6 تا اول)
-  const initialProducts = products.slice(0, 6);
-  // محصولات باقی‌مانده برای اسلایدر
-  const carouselProducts = products.slice(6);
-  // همه محصولات برای اسلایدر
-  const allCarouselProducts = [...initialProducts, ...carouselProducts];
-
   const renderProducts = () => {
     if (loading || products.length === 0) return null;
 
     return (
       <div className="space-y-8">
-        {/* همه محصولات در اسلایدر */}
-        {allCarouselProducts.length > 0 && (
+        {/* همه محصولات در گرید */}
+        {products.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-gray-800 text-right">
@@ -155,42 +141,15 @@ export default function SearchProductsLayout({
               </Link>
             </div>
 
-            <div className="relative">
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: false,
-                  dragFree: true,
-                }}
-                className="w-full"
-              >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                  {allCarouselProducts.map((product) => (
-                    <CarouselItem
-                      key={product.id}
-                      className="pl-2 md:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6 xl:basis-1/8"
-                    >
-                      <ShoppingProductCard
-                        product={product}
-                        telegramSupport={telegramSupport || "@gstyle_support"}
-                        isSearchResult={true}
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
-              </Carousel>
-            </div>
-
-            {/* اسکرول بار سفارشی */}
-            <div className="mt-4">
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: "33%" }}
-                ></div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 w-full">
+              {products.slice(0, 30).map((product) => (
+                <ShoppingProductCard
+                  key={product.id}
+                  product={product}
+                  telegramSupport={telegramSupport || "@gstyle_support"}
+                  isSearchResult={true}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -238,8 +197,8 @@ export default function SearchProductsLayout({
               </h2>
             </div>
             <div className="flex items-center">
-              <span className="text-lg font-semibold text-gray-800 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                &quot;{currentSearch}&quot;
+              <span className="text-lg font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500">
+                {currentSearch}
               </span>
             </div>
           </div>
