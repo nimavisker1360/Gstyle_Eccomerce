@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import ShoppingProductsGrid from "@/components/shared/product/shopping-products-grid";
+import SearchProductsLayout from "@/components/shared/product/search-products-layout";
+import AllProductsView from "@/components/shared/product/all-products-view";
 import { HomeBanner } from "@/components/shared/home/home-banner";
 import DiscountProductsGrid from "@/components/shared/product/discount-products-grid";
 
@@ -7,15 +8,36 @@ interface SearchPageProps {
   searchParams: {
     q?: string;
     discount?: string;
+    view?: string;
   };
 }
 
-function SearchResultsContent({ query }: { query: string }) {
+function SearchResultsContent({
+  query,
+  view,
+}: {
+  query: string;
+  view?: string;
+}) {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
+  // اگر view=all باشد، از کامپوننت AllProductsView استفاده کن
+  if (view === "all") {
+    return (
+      <div className="max-w-7xl mx-auto px-6">
+        <AllProductsView
+          telegramSupport={telegramSupport}
+          initialQuery={query}
+          hideSearchBar={true}
+        />
+      </div>
+    );
+  }
+
+  // در غیر این صورت، از کامپوننت معمولی استفاده کن
   return (
     <div className="max-w-7xl mx-auto px-6">
-      <ShoppingProductsGrid
+      <SearchProductsLayout
         telegramSupport={telegramSupport}
         initialQuery={query}
         hideSearchBar={true}
@@ -55,7 +77,7 @@ function DiscountProductsContent({ searchQuery }: { searchQuery?: string }) {
               جستجو و کاوش هزاران محصول از فروشگاه‌های معتبر ترکیه
             </p>
           </div>
-          <ShoppingProductsGrid
+          <SearchProductsLayout
             telegramSupport={telegramSupport}
             allowEmpty={true}
             hideSearchBar={false}
@@ -121,6 +143,7 @@ function SearchResultsSkeleton() {
 export default function SearchPage({ searchParams }: SearchPageProps) {
   const query = searchParams.q;
   const showDiscounts = searchParams.discount === "true";
+  const view = searchParams.view;
 
   // Show discount products if discount parameter is true (even if query exists)
   if (showDiscounts) {
@@ -146,7 +169,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       <HomeBanner />
       <div className="py-8">
         <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResultsContent query={query} />
+          <SearchResultsContent query={query} view={view} />
         </Suspense>
       </div>
     </>
