@@ -4,6 +4,7 @@ import ShoppingProductsGrid from "@/components/shared/product/shopping-products-
 import LatestDiscountsSlider from "@/components/shared/product/latest-discounts-slider";
 import CategoriesGrid from "@/components/shared/product/categories-grid";
 import WeeklyTrends from "@/components/shared/product/weekly-trends";
+import BrandsShowcase from "@/components/shared/product/brands-showcase";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
@@ -32,6 +33,11 @@ export default async function HomePage() {
       {/* Weekly Trends Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <WeeklyTrends />
+      </div>
+
+      {/* Brands Showcase Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <BrandsShowcase />
       </div>
 
       <div className="max-w-7xl mx-auto px-6">
