@@ -17,12 +17,7 @@ export default async function HomePage() {
       </div>
 
       {/* Categories Section */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl text-green-600 text-left">
-            دسته‌بندی‌های محصولات
-          </h2>
-        </div>
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-8">
         <CategoriesGrid />
       </div>
 

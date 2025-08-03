@@ -2,7 +2,7 @@ import { APP_NAME } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 import Menu from "./menu";
-import { MenuIcon } from "lucide-react";
+
 import data from "@/lib/data";
 import Search from "./search";
 import CartButton from "./cart-button";
@@ -59,12 +59,6 @@ export default function Header() {
       {/* Category Navigation Row */}
       <div className="bg-gray-50 px-4 sm:px-6 py-2 sm:py-3">
         <div className="flex items-center justify-center space-x-6 sm:space-x-8 text-sm max-w-7xl mx-auto">
-          <Link href="/categories" className="dark header-button flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-green-600">
-            <MenuIcon className="w-4 h-4" />
-            <span className="hidden sm:inline">دسته بندی محصولات</span>
-            <span className="sm:hidden">دسته‌بندی</span>
-          </Link>
-
           <div className="hidden md:flex items-center space-x-8 text-sm">
             {data.headerMenus.map((menu) =>
               menu.name === "مد و پوشاک" ? (
