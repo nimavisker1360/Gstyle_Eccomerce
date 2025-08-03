@@ -64,7 +64,7 @@ export function HomeCarousel({
         {items.map((item) => (
           <CarouselItem key={item.title}>
             <Link href={item.url}>
-              <div className="flex aspect-[16/6] items-center justify-center p-6 relative -m-1">
+              <div className="flex aspect-[16/8] sm:aspect-[16/7] md:aspect-[16/6] items-center justify-center p-2 sm:p-4 md:p-6 relative -m-1">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -72,11 +72,11 @@ export function HomeCarousel({
                   className="object-cover"
                   priority
                 />
-                <div className="absolute w-1/3 left-16 md:left-32 top-1/2 transform -translate-y-1/2">
-                  <h2 className="text-xl md:text-6xl font-bold mb-4 text-primary whitespace-pre-line">
+                <div className="absolute w-2/3 sm:w-1/2 md:w-1/3 left-4 sm:left-8 md:left-16 lg:left-32 top-1/2 transform -translate-y-1/2">
+                  <h2 className="text-sm sm:text-lg md:text-2xl lg:text-4xl xl:text-6xl font-bold mb-2 sm:mb-4 text-primary whitespace-pre-line">
                     {item.title}
                   </h2>
-                  <Button className="hidden md:block">
+                  <Button className="hidden sm:block text-xs sm:text-sm md:text-base">
                     {item.buttonCaption}
                   </Button>
                 </div>

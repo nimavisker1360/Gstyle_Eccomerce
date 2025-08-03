@@ -12,12 +12,12 @@ export default async function HomePage() {
       <HomeBanner />
 
       {/* Latest Discounts Section - Now fetches from Google Shopping */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <LatestDiscountsSlider />
       </div>
 
       {/* Categories Section */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <CategoriesGrid />
       </div>
 
