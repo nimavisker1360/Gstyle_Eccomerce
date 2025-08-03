@@ -8,6 +8,7 @@ import Search from "./search";
 import CartButton from "./cart-button";
 import UserButton from "./user-button";
 import FashionDropdown from "./fashion-dropdown";
+import BeautyDropdown from "./beauty-dropdown";
 
 export default function Header() {
   return (
@@ -63,6 +64,8 @@ export default function Header() {
             {data.headerMenus.map((menu) =>
               menu.name === "مد و پوشاک" ? (
                 <FashionDropdown key={menu.href} />
+              ) : menu.name === "آرایش و زیبایی" ? (
+                <BeautyDropdown key={menu.href} />
               ) : (
                 <div
                   key={menu.href}

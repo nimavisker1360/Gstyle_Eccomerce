@@ -62,60 +62,63 @@ const categories: Category[] = [
 export default function CategoriesGrid() {
   return (
     <div className="w-full mb-20">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl text-green-600 text-right">
-          دسته‌بندی‌های محصولات
-        </h2>
-        {/* <Link href="/search">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 text-green-600 border-green-600 hover:bg-green-50"
-          >
-            بیشتر ببینید
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-        </Link> */}
-      </div>
-
-      {/* Static Grid (6 categories only) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-24">
-        {categories.map((category) => (
-          <div key={category.id} className="md:aspect-square">
-            <Link
-              href={`/search?q=${encodeURIComponent(category.searchQuery)}`}
-              className="group block h-full"
+      {/* Gray rounded border container */}
+      <div className="border-2 border-gray-300 rounded-xl p-6 bg-white/50 shadow-md hover:shadow-lg transition-shadow duration-300">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl text-green-600 text-right">
+            دسته‌بندی‌های محصولات
+          </h2>
+          {/* <Link href="/search">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 text-green-600 border-green-600 hover:bg-green-50"
             >
-              <Card className="w-full h-full hover:shadow-lg transition-shadow duration-200 bg-white border-2 border-green-300 hover:border-green-500">
-                <CardContent className="p-4 h-full flex flex-col">
-                  {/* Category Image */}
-                  <div className="relative mb-3 flex-1">
-                    <div className="relative w-full h-32 md:h-36 bg-gray-50 rounded-lg overflow-hidden">
-                      <Image
-                        src={category.image}
-                        alt={category.persianName}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-200"
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/images/placeholder.jpg";
-                        }}
-                      />
-                    </div>
-                  </div>
+              بیشتر ببینید
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+          </Link> */}
+        </div>
 
-                  {/* Category Name */}
-                  <div className="text-center">
-                    <h3 className="text-sm font-medium text-gray-800 group-hover:text-green-600 transition-colors">
-                      {category.persianName}
-                    </h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
-        ))}
+        {/* Static Grid (6 categories only) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-24">
+          {categories.map((category) => (
+            <div key={category.id} className="md:aspect-square">
+              <Link
+                href={`/search?q=${encodeURIComponent(category.searchQuery)}`}
+                className="group block h-full"
+              >
+                <Card className="w-full h-full hover:shadow-lg transition-shadow duration-200 bg-white border border-blue-300 hover:border-blue-500">
+                  <CardContent className="p-4 h-full flex flex-col">
+                    {/* Category Image */}
+                    <div className="relative mb-3 flex-1">
+                      <div className="relative w-full h-32 md:h-36 bg-gray-50 rounded-lg overflow-hidden">
+                        <Image
+                          src={category.image}
+                          alt={category.persianName}
+                          fill
+                          className="object-cover hover:scale-105 transition-transform duration-200"
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/images/placeholder.jpg";
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Category Name */}
+                    <div className="text-center">
+                      <h3 className="text-sm font-medium text-gray-800 group-hover:text-green-600 transition-colors">
+                        {category.persianName}
+                      </h3>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

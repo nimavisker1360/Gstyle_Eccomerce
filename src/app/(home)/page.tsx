@@ -3,22 +3,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ShoppingProductsGrid from "@/components/shared/product/shopping-products-grid";
 import LatestDiscountsSlider from "@/components/shared/product/latest-discounts-slider";
 import CategoriesGrid from "@/components/shared/product/categories-grid";
+import WeeklyTrends from "@/components/shared/product/weekly-trends";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
   return (
     <>
-      <HomeBanner />
+      <div className="pt-8">
+        <HomeBanner />
+      </div>
 
       {/* Latest Discounts Section - Now fetches from Google Shopping */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-8">
         <LatestDiscountsSlider />
       </div>
 
       {/* Categories Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <CategoriesGrid />
+      </div>
+
+      {/* Separator */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="border-t border-gray-200"></div>
+      </div>
+
+      {/* Weekly Trends Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <WeeklyTrends />
       </div>
 
       <div className="max-w-7xl mx-auto px-6">

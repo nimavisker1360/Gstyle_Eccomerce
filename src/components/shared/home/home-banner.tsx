@@ -23,10 +23,10 @@ export function HomeBanner() {
   }, [bannerImages.length]);
 
   return (
-    <div className="w-full bg-white relative overflow-hidden">
+    <div className="w-full relative overflow-hidden">
       {/* Banner container aligned with header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden mx-2 sm:mx-0">
+      <div className="sm:max-w-7xl sm:mx-auto sm:px-6 md:px-8">
+        <div className="bg-white sm:border sm:border-gray-200 rounded-none sm:rounded-lg shadow-none sm:shadow-lg overflow-hidden">
           <div className="relative overflow-hidden">
             {/* Carousel container */}
             <div
@@ -42,7 +42,7 @@ export function HomeBanner() {
                     src={image}
                     alt={`Banner ${index + 1}`}
                     fill
-                    className="object-contain sm:object-cover"
+                    className="object-cover"
                     priority={index === 0}
                   />
                 </div>
