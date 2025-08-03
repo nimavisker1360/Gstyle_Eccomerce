@@ -233,24 +233,40 @@ export default function SearchProductsLayout({
 
     return (
       <div className="w-full bg-white">
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="text-center">
-            <h3 className="text-xl font-bold text-gray-700 mb-4">
-              جستجوی بهترین محصولات
+        {/* Beautiful Loading Animation */}
+        <div className="flex flex-col items-center justify-center py-8 mb-6">
+          <div className="relative">
+            {/* Main loading spinner */}
+            <div className="w-12 h-12 border-4 border-green-100 border-t-4 border-t-green-500 rounded-full animate-spin"></div>
+
+            {/* Inner spinner */}
+            <div
+              className="absolute top-1.5 left-1.5 w-9 h-9 border-4 border-blue-100 border-t-4 border-t-blue-500 rounded-full animate-spin"
+              style={{
+                animationDirection: "reverse",
+                animationDuration: "1.5s",
+              }}
+            ></div>
+          </div>
+
+          {/* Loading text with typewriter effect */}
+          <div className="mt-4 text-center">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              جستجوی بهترین محصولات...
             </h3>
-            <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse mb-4">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
+            <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"></div>
               <div
-                className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"
                 style={{ animationDelay: "0.1s" }}
               ></div>
               <div
-                className="w-2 h-2 bg-green-500 rounded-full animate-bounce"
+                className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"
                 style={{ animationDelay: "0.2s" }}
               ></div>
             </div>
-            <p className="text-sm text-gray-500">
-              لطفا صبر کنید، داریم بهترین محصولات رو پیدا می‌کنیم
+            <p className="text-xs text-gray-500 mt-2">
+              از گوگل شاپینگ در حال پیدا کردن محصولات...
             </p>
           </div>
         </div>
