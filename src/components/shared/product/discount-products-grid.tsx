@@ -91,7 +91,7 @@ export default function DiscountProductsGrid() {
         </div>
 
         {/* Beautiful Product Cards Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[...Array(10)].map((_, index) => (
             <div
               key={index}
@@ -196,7 +196,7 @@ export default function DiscountProductsGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {products.map((product, index) => (
         <DiscountProductCard key={`${product.id}-${index}`} product={product} />
       ))}

@@ -9,6 +9,7 @@ import CartButton from "./cart-button";
 import UserButton from "./user-button";
 import FashionDropdown from "./fashion-dropdown";
 import BeautyDropdown from "./beauty-dropdown";
+import MobileCategoriesMenu from "./mobile-categories-menu";
 
 export default function Header() {
   return (
@@ -52,8 +53,11 @@ export default function Header() {
         </div>
 
         {/* Mobile Search - Below logo */}
-        <div className="md:hidden block py-3">
-          <Search />
+        <div className="md:hidden flex items-center gap-3 py-3">
+          <MobileCategoriesMenu />
+          <div className="flex-1">
+            <Search />
+          </div>
         </div>
       </div>
 
