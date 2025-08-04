@@ -3,10 +3,20 @@
 import { connectToDatabase } from "@/lib/db";
 import Product, { IProduct } from "@/lib/db/models/product.model";
 import { PAGE_SIZE } from "../constants";
+import data from "@/lib/data";
+import { toSlug } from "@/lib/utils";
 
 // GET ONE PRODUCT BY SLUG
 export async function getProductBySlug(slug: string) {
-  await connectToDatabase();
+  const db = await connectToDatabase();
+  
+  if (!db) {
+    // Fallback to static data
+    const product = data.products.find(p => p.slug === slug && p.isPublished);
+    if (!product) throw new Error("Product not found");
+    return product as IProduct;
+  }
+  
   const product = await Product.findOne({ slug, isPublished: true });
   if (!product) throw new Error("Product not found");
   return JSON.parse(JSON.stringify(product)) as IProduct;
@@ -43,7 +53,14 @@ export async function getRelatedProductsByCategory({
 }
 
 export async function getAllCategories() {
-  await connectToDatabase();
+  const db = await connectToDatabase();
+  
+  if (!db) {
+    // Fallback to static data
+    const categories = [...new Set(data.products.filter(p => p.isPublished).map(p => p.category))];
+    return categories;
+  }
+  
   const categories = await Product.find({ isPublished: true }).distinct(
     "category"
   );
@@ -56,7 +73,21 @@ export async function getProductsForCard({
   tag: string;
   limit?: number;
 }) {
-  await connectToDatabase();
+  const db = await connectToDatabase();
+  
+  if (!db) {
+    // Fallback to static data
+    const products = data.products
+      .filter(p => p.tags.includes(tag) && p.isPublished)
+      .slice(0, limit)
+      .map(p => ({
+        name: p.name,
+        href: `/product/${p.slug}`,
+        image: p.images[0],
+      }));
+    return products;
+  }
+  
   const products = await Product.find(
     { tags: { $in: [tag] }, isPublished: true },
     {
@@ -82,7 +113,16 @@ export async function getProductsByTag({
   tag: string;
   limit?: number;
 }) {
-  await connectToDatabase();
+  const db = await connectToDatabase();
+  
+  if (!db) {
+    // Fallback to static data
+    const products = data.products
+      .filter(p => p.tags.includes(tag) && p.isPublished)
+      .slice(0, limit);
+    return products as IProduct[];
+  }
+  
   const products = await Product.find({
     tags: { $in: [tag] },
     isPublished: true,
