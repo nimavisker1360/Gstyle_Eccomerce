@@ -208,12 +208,210 @@ export async function GET(request: NextRequest) {
     // جستجو در Google Shopping برای محصولات از ترکیه
     console.log(`🔍 Searching with query: "${enhancedQuery}"`);
 
+    // تشخیص نوع کتگوری برای تعیین تعداد نتایج
+    const lowerQuery = enhancedQuery.toLowerCase();
+
+    // حیوانات خانگی - بررسی اول برای اولویت بالاتر
+    const petsKeywords = [
+      "حیوانات خانگی",
+      "حیوانات",
+      "pets",
+      "سگ",
+      "dog",
+      "گربه",
+      "cat",
+      "حیوان خانگی",
+      "pet",
+      "غذای سگ",
+      "غذای گربه",
+      "تشویقی سگ",
+      "تشویقی گربه",
+      "قلاده",
+      "محصولات بهداشتی حیوانات",
+    ];
+
+    // ورزشی - بررسی دوم
+    const sportsKeywords = [
+      "ورزشی",
+      "sport",
+      "sports",
+      "ورزش",
+      "فیتنس",
+      "fitness",
+      "دویدن",
+      "running",
+      "ساک ورزشی",
+      "لوازم ورزشی",
+      "کفش ورزشی",
+      "لباس ورزشی",
+      "ترموس",
+      "قمقمه",
+      "اسباب ورزشی",
+    ];
+
+    // ویتامین و دارو
+    const vitaminKeywords = [
+      "ویتامین",
+      "vitamin",
+      "دارو",
+      "medicine",
+      "مکمل",
+      "supplement",
+      "مولتی ویتامین",
+      "کلسیم",
+      "ملاتونین",
+    ];
+
+    // زیبایی و آرایش
+    const beautyKeywords = [
+      "زیبایی",
+      "آرایش",
+      "beauty",
+      "cosmetics",
+      "makeup",
+      "perfume",
+      "cologne",
+      "لوازم آرایشی",
+      "عطر",
+      "ادکلن",
+      "مراقبت از پوست",
+      "ضد پیری",
+      "محصولات آفتاب",
+      "رنگ مو",
+      "شامپو",
+    ];
+
+    // الکترونیک
+    const electronicsKeywords = [
+      "الکترونیک",
+      "electronics",
+      "موبایل",
+      "mobile",
+      "لپ تاپ",
+      "laptop",
+      "تبلت",
+      "tablet",
+      "هدفون",
+      "headphone",
+      "ساعت هوشمند",
+      "smartwatch",
+    ];
+
+    // مد و پوشاک - بررسی آخر برای جلوگیری از تداخل
+    const fashionKeywords = [
+      "مد",
+      "پوشاک",
+      "fashion",
+      "clothing",
+      "dress",
+      "shirt",
+      "pants",
+      "jeans",
+      "skirt",
+      "blouse",
+      "t-shirt",
+      "sweater",
+      "jacket",
+      "coat",
+      "پیراهن",
+      "تاپ",
+      "شلوار",
+      "شومیز",
+      "دامن",
+      "ژاکت",
+      "کت",
+      "کیف",
+      "کیف دستی",
+      "jewelry",
+      "جواهرات",
+      "زیورآلات",
+    ];
+
+    // تشخیص نوع کوئری با اولویت‌بندی
+    let queryType = "other";
+    let isFashionQuery = false;
+
+    if (petsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      queryType = "pets";
+    } else if (sportsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      queryType = "sports";
+    } else if (
+      vitaminKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      queryType = "vitamins";
+    } else if (beautyKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      queryType = "beauty";
+      isFashionQuery = true; // زیبایی هم تعداد نتایج بیشتری نیاز دارد
+    } else if (
+      electronicsKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      queryType = "electronics";
+    } else if (
+      fashionKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      queryType = "fashion";
+      isFashionQuery = true;
+    }
+
+    // بهبود کوئری بر اساس نوع تشخیص داده شده
+    if (queryType === "sports") {
+      // برای کوئری‌های ورزشی، کلمات کلیدی دقیق‌تر اضافه کن
+      if (lowerQuery.includes("لوازم ورزشی") || lowerQuery.includes("ورزشی")) {
+        enhancedQuery = enhancedQuery + " spor malzemeleri fitness gym";
+      }
+      if (lowerQuery.includes("کفش ورزشی")) {
+        enhancedQuery = enhancedQuery + " spor ayakkabı sneaker athletic shoes";
+      }
+      if (lowerQuery.includes("لباس ورزشی")) {
+        enhancedQuery =
+          enhancedQuery + " spor giyim atletik kıyafet sportswear";
+      }
+      if (lowerQuery.includes("ساک ورزشی")) {
+        enhancedQuery = enhancedQuery + " spor çantası gym bag";
+      }
+      if (lowerQuery.includes("ترموس ورزشی")) {
+        enhancedQuery = enhancedQuery + " spor termos water bottle";
+      }
+      console.log(`🏃‍♂️ Sports query enhanced: "${enhancedQuery}"`);
+    } else if (queryType === "pets") {
+      // برای کوئری‌های حیوانات خانگی
+      if (lowerQuery.includes("غذای سگ")) {
+        enhancedQuery = enhancedQuery + " köpek maması dog food";
+      }
+      if (lowerQuery.includes("غذای گربه")) {
+        enhancedQuery = enhancedQuery + " kedi maması cat food";
+      }
+      if (lowerQuery.includes("قلاده")) {
+        enhancedQuery = enhancedQuery + " köpek tasması pet collar";
+      }
+      console.log(`🐕 Pet query enhanced: "${enhancedQuery}"`);
+    } else if (queryType === "fashion") {
+      // برای کوئری‌های مد و پوشاک
+      if (lowerQuery.includes("پیراهن")) {
+        enhancedQuery = enhancedQuery + " gömlek shirt";
+      }
+      if (lowerQuery.includes("کیف")) {
+        enhancedQuery = enhancedQuery + " çanta bag handbag";
+      }
+      if (lowerQuery.includes("جین")) {
+        enhancedQuery = enhancedQuery + " jean denim";
+      }
+      console.log(`👔 Fashion query enhanced: "${enhancedQuery}"`);
+    }
+
+    const resultCount = isFashionQuery ? 60 : 50;
+
+    console.log(`🎯 Query type: ${queryType}`);
+    console.log(`📊 Result count: ${resultCount}`);
+    console.log(`🔍 Original query: "${query}"`);
+    console.log(`🔍 Enhanced query: "${enhancedQuery}"`);
+
     const serpApiParams = {
       engine: "google_shopping",
       q: enhancedQuery,
       gl: "tr", // ترکیه
       hl: "tr", // زبان ترکی
-      num: 50, // افزایش تعداد نتایج برای انتخاب بهتر
+      num: resultCount, // تعداد نتایج بر اساس نوع کوئری
       device: "desktop", // اجباری برای دسکتاپ
       api_key: process.env.SERPAPI_KEY,
     };
@@ -261,13 +459,175 @@ export async function GET(request: NextRequest) {
       `🔍 Total products from SerpAPI: ${shoppingResults.shopping_results.length}`
     );
 
-    // محدود کردن نتایج به 50 محصول
-    const limitedResults = shoppingResults.shopping_results.slice(0, 50);
+    // اگر برای کوئری مد و پوشاک نتایج کم است، سعی کن با چندین جستجوی موازی
+    let limitedResults = shoppingResults.shopping_results.slice(0, resultCount);
+
+    if (isFashionQuery && limitedResults.length < 30) {
+      console.log(
+        `⚠️ Fashion query returned only ${limitedResults.length} results, trying multiple broader searches...`
+      );
+
+      const additionalQueries = [];
+
+      // اضافه کردن کوئری‌های مختلف برای نتایج بیشتر
+      if (
+        enhancedQuery.includes("kadın") ||
+        enhancedQuery.includes("women") ||
+        enhancedQuery.includes("زنانه")
+      ) {
+        additionalQueries.push("kadın giyim", "women clothing", "kadın moda");
+      } else if (
+        enhancedQuery.includes("erkek") ||
+        enhancedQuery.includes("men") ||
+        enhancedQuery.includes("مردانه")
+      ) {
+        additionalQueries.push("erkek giyim", "men clothing", "erkek moda");
+      } else {
+        additionalQueries.push("giyim", "moda", "clothing", "fashion");
+      }
+
+      // انجام جستجوهای اضافی
+      for (const additionalQuery of additionalQueries) {
+        try {
+          const additionalParams = {
+            ...serpApiParams,
+            q: additionalQuery,
+            num: 40,
+          };
+
+          console.log(`🔄 Additional search with: "${additionalQuery}"`);
+          const additionalResults = await getJson(additionalParams);
+
+          if (
+            additionalResults.shopping_results &&
+            additionalResults.shopping_results.length > 0
+          ) {
+            console.log(
+              `✅ Additional search found ${additionalResults.shopping_results.length} results`
+            );
+
+            // ترکیب نتایج و حذف تکراری‌ها
+            const existingIds = new Set(
+              limitedResults.map((p: any) => p.product_id || p.title)
+            );
+            const newResults = additionalResults.shopping_results.filter(
+              (p: any) => !existingIds.has(p.product_id || p.title)
+            );
+
+            limitedResults = [...limitedResults, ...newResults].slice(0, 60);
+            console.log(
+              `📊 Combined results: ${limitedResults.length} products`
+            );
+
+            if (limitedResults.length >= 50) break; // اگر به تعداد کافی رسیدیم، توقف کن
+          }
+        } catch (error) {
+          console.error(
+            `❌ Additional search failed for "${additionalQuery}":`,
+            error
+          );
+        }
+      }
+    }
 
     console.log(`📊 Processing ${limitedResults.length} products`);
 
+    // فیلتر محصولات بر اساس نوع کوئری
+    let filteredResults = limitedResults;
+
+    if (queryType === "sports") {
+      // برای کوئری‌های ورزشی، فقط محصولاتی را نگه دار که واقعاً ورزشی هستند
+      filteredResults = limitedResults.filter((product: any) => {
+        const title = product.title?.toLowerCase() || "";
+        const snippet = product.snippet?.toLowerCase() || "";
+        const combined = title + " " + snippet;
+
+        // کلمات کلیدی ورزشی مثبت
+        const sportsPositive = [
+          "spor",
+          "sport",
+          "athletic",
+          "fitness",
+          "gym",
+          "workout",
+          "exercise",
+          "running",
+          "jogging",
+          "basketball",
+          "football",
+          "tennis",
+          "golf",
+          "yoga",
+          "pilates",
+          "crossfit",
+          "training",
+          "active",
+          "performance",
+        ];
+
+        // کلمات کلیدی غیر ورزشی (باید حذف شوند)
+        const sportsNegative = [
+          "formal",
+          "business",
+          "casual",
+          "evening",
+          "party",
+          "wedding",
+          "office",
+          "dress",
+          "elegant",
+          "fashion",
+          "style",
+          "chic",
+        ];
+
+        const hasPositive = sportsPositive.some((word) =>
+          combined.includes(word)
+        );
+        const hasNegative = sportsNegative.some((word) =>
+          combined.includes(word)
+        );
+
+        return hasPositive && !hasNegative;
+      });
+
+      console.log(
+        `🏃‍♂️ Sports filter: ${limitedResults.length} → ${filteredResults.length} products`
+      );
+    } else if (queryType === "pets") {
+      // برای کوئری‌های حیوانات خانگی
+      filteredResults = limitedResults.filter((product: any) => {
+        const title = product.title?.toLowerCase() || "";
+        const snippet = product.snippet?.toLowerCase() || "";
+        const combined = title + " " + snippet;
+
+        const petKeywords = [
+          "pet",
+          "köpek",
+          "kedi",
+          "dog",
+          "cat",
+          "animal",
+          "hayvan",
+          "mama",
+          "food",
+          "toy",
+          "collar",
+          "leash",
+          "bed",
+          "bowl",
+        ];
+
+        return petKeywords.some((word) => combined.includes(word));
+      });
+
+      console.log(
+        `🐕 Pet filter: ${limitedResults.length} → ${filteredResults.length} products`
+      );
+    }
+
     // ترجمه عنوان و توضیحات محصولات با OpenAI
-    const enhancedProductsPromises = limitedResults.map(
+    const enhancedProductsPromises = filteredResults.map(
       async (product: any, index: number) => {
         console.log(`🔄 Processing product ${index + 1}: ${product.title}`);
 
@@ -495,15 +855,23 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ Final processed products: ${enhancedProducts.length}`);
 
+    let message = "";
+    if (enhancedProducts.length === 0) {
+      message = "هیچ محصولی یافت نشد. لطفاً کلمات کلیدی دیگری امتحان کنید.";
+    } else if (isFashionQuery && enhancedProducts.length < 20) {
+      message = `${enhancedProducts.length} محصول مد و پوشاک یافت شد. برای نتایج بیشتر کلمات کلیدی مختلفی امتحان کنید.`;
+    } else if (isFashionQuery) {
+      message = `${enhancedProducts.length} محصول مد و پوشاک یافت شد.`;
+    }
+
     return NextResponse.json({
       products: enhancedProducts,
       total: shoppingResults.search_information?.total_results || 0,
       search_query: query,
       enhanced_query: enhancedQuery,
-      message:
-        enhancedProducts.length === 0
-          ? "هیچ محصولی یافت نشد. لطفاً کلمات کلیدی دیگری امتحان کنید."
-          : "",
+      query_type: queryType,
+      is_fashion_query: isFashionQuery,
+      message: message,
     });
   } catch (error) {
     console.error("❌ Shopping API Error:", error);

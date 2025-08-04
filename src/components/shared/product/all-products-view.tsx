@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, ArrowLeft } from "lucide-react";
@@ -43,7 +43,152 @@ export default function AllProductsView({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSearch = async (query: string) => {
+  // تشخیص نوع کتگوری و کوتاه کردن متن نمایشی
+  const getDisplayText = (query: string) => {
+    const lowerQuery = query.toLowerCase();
+
+    // حیوانات خانگی - بررسی اول برای اولویت بالاتر
+    const petsKeywords = [
+      "حیوانات خانگی",
+      "حیوانات",
+      "pets",
+      "سگ",
+      "dog",
+      "گربه",
+      "cat",
+      "حیوان خانگی",
+      "pet",
+      "غذای سگ",
+      "غذای گربه",
+      "تشویقی سگ",
+      "تشویقی گربه",
+      "قلاده",
+      "محصولات بهداشتی حیوانات",
+    ];
+
+    // ورزشی - بررسی دوم
+    const sportsKeywords = [
+      "ورزشی",
+      "sport",
+      "sports",
+      "ورزش",
+      "فیتنس",
+      "fitness",
+      "دویدن",
+      "running",
+      "ساک ورزشی",
+      "لوازم ورزشی",
+      "کفش ورزشی",
+      "لباس ورزشی",
+      "ترموس",
+      "قمقمه",
+      "اسباب ورزشی",
+    ];
+
+    // ویتامین و دارو
+    const vitaminKeywords = [
+      "ویتامین",
+      "vitamin",
+      "دارو",
+      "medicine",
+      "مکمل",
+      "supplement",
+      "مولتی ویتامین",
+      "کلسیم",
+      "ملاتونین",
+    ];
+
+    // زیبایی و آرایش
+    const beautyKeywords = [
+      "زیبایی",
+      "آرایش",
+      "beauty",
+      "cosmetics",
+      "makeup",
+      "perfume",
+      "cologne",
+      "لوازم آرایشی",
+      "عطر",
+      "ادکلن",
+      "مراقبت از پوست",
+      "ضد پیری",
+      "محصولات آفتاب",
+      "رنگ مو",
+      "شامپو",
+    ];
+
+    // الکترونیک
+    const electronicsKeywords = [
+      "الکترونیک",
+      "electronics",
+      "موبایل",
+      "mobile",
+      "لپ تاپ",
+      "laptop",
+      "تبلت",
+      "tablet",
+      "هدفون",
+      "headphone",
+      "ساعت هوشمند",
+      "smartwatch",
+    ];
+
+    // مد و پوشاک - بررسی آخر برای جلوگیری از تداخل (بدون کلمات مشترک)
+    const fashionKeywords = [
+      "مد",
+      "پوشاک",
+      "fashion",
+      "clothing",
+      "dress",
+      "shirt",
+      "pants",
+      "jeans",
+      "skirt",
+      "blouse",
+      "t-shirt",
+      "sweater",
+      "jacket",
+      "coat",
+      "پیراهن",
+      "تاپ",
+      "شلوار",
+      "شومیز",
+      "دامن",
+      "ژاکت",
+      "کت",
+      "کیف",
+      "کیف دستی",
+      "jewelry",
+      "جواهرات",
+      "زیورآلات",
+    ];
+
+    // بررسی به ترتیب اولویت
+    if (petsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "حیوانات خانگی";
+    } else if (sportsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "لوازم ورزشی";
+    } else if (
+      vitaminKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "ویتامین و دارو";
+    } else if (beautyKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "زیبایی و آرایش";
+    } else if (
+      electronicsKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "الکترونیک";
+    } else if (
+      fashionKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "مد و پوشاک";
+    }
+
+    // اگر هیچ کدام تطبیق نکرد، متن اصلی را کوتاه کن
+    return query.length > 20 ? query.substring(0, 20) + "..." : query;
+  };
+
+  const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
 
     setLoading(true);
@@ -92,7 +237,7 @@ export default function AllProductsView({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +250,7 @@ export default function AllProductsView({
       console.log(`🚀 Initial search for: "${initialQuery}"`);
       handleSearch(initialQuery);
     }
-  }, [initialQuery]);
+  }, [initialQuery, handleSearch]);
 
   const renderSearchBar = () => {
     if (hideSearchBar) return null;
@@ -148,7 +293,7 @@ export default function AllProductsView({
             </div>
             <div className="flex items-center">
               <span className="text-lg font-semibold text-gray-800 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                &quot;{currentSearch}&quot;
+                {getDisplayText(currentSearch)}
               </span>
             </div>
           </div>

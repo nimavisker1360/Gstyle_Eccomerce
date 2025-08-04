@@ -2,17 +2,36 @@
 
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const sportsCategories = {
-  "لوازم ورزشی": [
-    "کفش",
-    "لباس",
-    "اکسسوری",
-    "مایو",
-    "ساک ورزشی",
-    "ترموس",
-    "قمقمه",
+  "کفش ورزشی": [
+    "کفش دویدن",
+    "کفش پیاده‌روی", 
+    "کفش بسکتبال",
+    "کفش فوتبال",
+    "کفش تنیس",
+    "کفش ورزشی زنانه",
+    "کفش ورزشی مردانه",
   ],
+  "لباس ورزشی": [
+    "تیشرت ورزشی",
+    "شلوار ورزشی",
+    "لباس فیتنس",
+    "لباس یوگا",
+    "لباس دویدن",
+    "لباس ورزشی زنانه",
+    "لباس ورزشی مردانه",
+  ],
+  "لوازم ورزشی": [
+    "ساک ورزشی",
+    "قمقمه ورزشی",
+    "ترموس ورزشی",
+    "دستکش ورزشی",
+    "تاپ ورزشی",
+    "ساعت ورزشی",
+    "ماشین تناسب اندام",
+  ]
 };
 
 export default function SportsDropdown() {
@@ -62,19 +81,21 @@ export default function SportsDropdown() {
             : "opacity-0 invisible transform -translate-y-2 scale-95 pointer-events-none"
         }`}
       >
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[300px] p-4">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[400px] p-4">
           <div className="space-y-2">
             {Object.entries(sportsCategories).map(
               ([mainCategory, subCategories]) => (
                 <div key={mainCategory} className="space-y-2">
+                  <h4 className="font-semibold text-sm text-gray-800 border-b pb-1">{mainCategory}</h4>
                   <div className="grid grid-cols-2 gap-1">
                     {subCategories.map((item) => (
-                      <div
+                      <Link
                         key={item}
-                        className="text-green-700 font-bold hover:text-blue-700 text-xs py-1 px-2 rounded hover:bg-blue-50 transition-colors"
+                        href={`/sports-search?q=${encodeURIComponent(item)}`}
+                        className="text-green-700 font-bold hover:text-blue-700 text-xs py-1 px-2 rounded hover:bg-blue-50 transition-colors cursor-pointer"
                       >
                         <span className="truncate">{item}</span>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>

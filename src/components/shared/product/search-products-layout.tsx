@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, ChevronRight } from "lucide-react";
@@ -45,7 +45,204 @@ export default function SearchProductsLayout({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSearch = async (query: string) => {
+  // تشخیص کوئری‌های مربوط به مد و پوشاک
+  const isFashionQuery = (query: string) => {
+    const fashionKeywords = [
+      "لباس",
+      "پوشاک",
+      "مد",
+      "fashion",
+      "clothing",
+      "dress",
+      "shirt",
+      "pants",
+      "jeans",
+      "skirt",
+      "blouse",
+      "t-shirt",
+      "sweater",
+      "jacket",
+      "coat",
+      "shoes",
+      "boots",
+      "sneakers",
+      "bag",
+      "purse",
+      "accessories",
+      "jewelry",
+      "زیبایی",
+      "beauty",
+      "cosmetics",
+      "makeup",
+      "perfume",
+      "cologne",
+      "زنانه",
+      "مردانه",
+      "بچه گانه",
+      "women",
+      "men",
+      "kids",
+      "children",
+    ];
+
+    return fashionKeywords.some((keyword) =>
+      query.toLowerCase().includes(keyword.toLowerCase())
+    );
+  };
+
+  // تشخیص نوع کتگوری و کوتاه کردن متن نمایشی
+  const getDisplayText = (query: string) => {
+    const lowerQuery = query.toLowerCase();
+
+    // حیوانات خانگی - بررسی اول برای اولویت بالاتر
+    const petsKeywords = [
+      "حیوانات خانگی",
+      "حیوانات",
+      "pets",
+      "سگ",
+      "dog",
+      "گربه",
+      "cat",
+      "حیوان خانگی",
+      "pet",
+      "غذای سگ",
+      "غذای گربه",
+      "تشویقی سگ",
+      "تشویقی گربه",
+      "قلاده",
+      "محصولات بهداشتی حیوانات",
+    ];
+
+    // ورزشی - بررسی دوم
+    const sportsKeywords = [
+      "ورزشی",
+      "sport",
+      "sports",
+      "ورزش",
+      "فیتنس",
+      "fitness",
+      "دویدن",
+      "running",
+      "ساک ورزشی",
+      "لوازم ورزشی",
+      "کفش ورزشی",
+      "لباس ورزشی",
+      "ترموس",
+      "قمقمه",
+      "اسباب ورزشی",
+    ];
+
+    // ویتامین و دارو
+    const vitaminKeywords = [
+      "ویتامین",
+      "vitamin",
+      "دارو",
+      "medicine",
+      "مکمل",
+      "supplement",
+      "مولتی ویتامین",
+      "کلسیم",
+      "ملاتونین",
+    ];
+
+    // زیبایی و آرایش
+    const beautyKeywords = [
+      "زیبایی",
+      "آرایش",
+      "آرایش و زیبایی",
+      "زیبایی و آرایش",
+      "beauty",
+      "cosmetics",
+      "makeup",
+      "perfume",
+      "cologne",
+      "لوازم آرایشی",
+      "عطر",
+      "ادکلن",
+      "مراقبت از پوست",
+      "ضد پیری",
+      "محصولات آفتاب",
+      "رنگ مو",
+      "شامپو",
+      "رژ لب",
+      "ماسکارا",
+      "کرم مرطوب کننده",
+      "کرم آفتاب",
+      "لوازم آرایش",
+    ];
+
+    // الکترونیک
+    const electronicsKeywords = [
+      "الکترونیک",
+      "electronics",
+      "موبایل",
+      "mobile",
+      "لپ تاپ",
+      "laptop",
+      "تبلت",
+      "tablet",
+      "هدفون",
+      "headphone",
+      "ساعت هوشمند",
+      "smartwatch",
+    ];
+
+    // مد و پوشاک - بررسی آخر برای جلوگیری از تداخل (بدون کلمات مشترک)
+    const fashionKeywords = [
+      "مد",
+      "پوشاک",
+      "fashion",
+      "clothing",
+      "dress",
+      "shirt",
+      "pants",
+      "jeans",
+      "skirt",
+      "blouse",
+      "t-shirt",
+      "sweater",
+      "jacket",
+      "coat",
+      "پیراهن",
+      "تاپ",
+      "شلوار",
+      "شومیز",
+      "دامن",
+      "ژاکت",
+      "کت",
+      "کیف",
+      "کیف دستی",
+      "jewelry",
+      "جواهرات",
+      "زیورآلات",
+    ];
+
+    // بررسی به ترتیب اولویت - زیبایی اول برای اولویت بالاتر
+    if (beautyKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "زیبایی و آرایش";
+    } else if (petsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "حیوانات خانگی";
+    } else if (
+      vitaminKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "ویتامین و دارو";
+    } else if (
+      electronicsKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "الکترونیک";
+    } else if (sportsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
+      return "لوازم ورزشی";
+    } else if (
+      fashionKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "مد و پوشاک";
+    }
+
+    // اگر هیچ کدام تطبیق نکرد، متن اصلی را کوتاه کن
+    return query.length > 20 ? query.substring(0, 20) + "..." : query;
+  };
+
+  const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
 
     setLoading(true);
@@ -77,7 +274,12 @@ export default function SearchProductsLayout({
 
       // Log search results for debugging
       if (data.products && data.products.length > 0) {
+        const isQueryFashion = isFashionQuery(query);
         console.log(`✅ Found ${data.products.length} products`);
+        console.log(`🎯 Fashion query: ${isQueryFashion ? "Yes" : "No"}`);
+        console.log(
+          `📊 Will display: ${isQueryFashion ? data.products.length : Math.min(50, data.products.length)} products`
+        );
         data.products.forEach((product: ShoppingProduct, index: number) => {
           console.log(
             `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
@@ -94,7 +296,7 @@ export default function SearchProductsLayout({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,7 +309,7 @@ export default function SearchProductsLayout({
       console.log(`🚀 Initial search for: "${initialQuery}"`);
       handleSearch(initialQuery);
     }
-  }, [initialQuery]);
+  }, [initialQuery, handleSearch]);
 
   // اگر هیچ query اولیه‌ای وجود نداشته باشد و allowEmpty false باشد، هیچ محصولی نمایش نده
   if ((!initialQuery || !initialQuery.trim()) && !allowEmpty) {
@@ -125,31 +327,40 @@ export default function SearchProductsLayout({
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-gray-800 text-right">
                 محصولات پیشنهادی
+                {isFashionQuery(currentSearch) && (
+                  <span className="text-sm text-green-600 font-normal mr-2">
+                    ({products.length} محصول یافت شد)
+                  </span>
+                )}
               </h3>
-              <Link
-                href={`/search?q=${encodeURIComponent(currentSearch)}&view=all`}
-                passHref
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-green-600 border-green-600 hover:bg-green-50"
+              {!isFashionQuery(currentSearch) && (
+                <Link
+                  href={`/search?q=${encodeURIComponent(currentSearch)}&view=all`}
+                  passHref
                 >
-                  مشاهده بیشتر
-                  <ChevronRight className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-                </Button>
-              </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-green-600 border-green-600 hover:bg-green-50"
+                  >
+                    مشاهده بیشتر
+                    <ChevronRight className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-3 w-full">
-              {products.slice(0, 50).map((product) => (
-                <ShoppingProductCard
-                  key={product.id}
-                  product={product}
-                  telegramSupport={telegramSupport || "@gstyle_support"}
-                  isSearchResult={true}
-                />
-              ))}
+              {products
+                .slice(0, isFashionQuery(currentSearch) ? products.length : 50)
+                .map((product) => (
+                  <ShoppingProductCard
+                    key={product.id}
+                    product={product}
+                    telegramSupport={telegramSupport || "@gstyle_support"}
+                    isSearchResult={true}
+                  />
+                ))}
             </div>
           </div>
         )}
@@ -198,7 +409,7 @@ export default function SearchProductsLayout({
             </div>
             <div className="flex items-center">
               <span className="text-lg font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500">
-                {currentSearch}
+                {getDisplayText(currentSearch)}
               </span>
             </div>
           </div>
