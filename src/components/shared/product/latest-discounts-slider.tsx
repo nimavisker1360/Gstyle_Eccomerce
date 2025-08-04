@@ -45,7 +45,9 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
 
         console.log("🔍 Fetching discount products from Google Shopping...");
 
-        const response = await fetch("/api/shopping/discounts");
+        // Add timestamp to ensure fresh results on every component mount/refresh
+        const timestamp = Date.now();
+        const response = await fetch(`/api/shopping/discounts?t=${timestamp}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -54,8 +56,14 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
         const data = await response.json();
 
         if (data.products && Array.isArray(data.products)) {
-          setProducts(data.products);
-          console.log(`✅ Loaded ${data.products.length} discount products`);
+          // Shuffle products for additional randomization
+          const shuffledProducts = [...data.products].sort(
+            () => Math.random() - 0.5
+          );
+          setProducts(shuffledProducts);
+          console.log(
+            `✅ Loaded ${shuffledProducts.length} discount products (shuffled)`
+          );
         } else {
           console.warn("⚠️ No products found in response");
           setProducts([]);

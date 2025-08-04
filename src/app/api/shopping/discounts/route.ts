@@ -3,19 +3,209 @@ import { getJson } from "serpapi";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
-// قائمة الاستفسارات المختلفة للبحث عن منتجات مخفضة
-const discountQueries = [
-  "indirim ürünler", // منتجات مخفضة بالتركية
-  "kampanya ürünler", // منتجات الحملة
-  "outlet ürünler", // منتجات المتجر المخفض
-  "ucuz ürünler", // منتجات رخيصة
-  "fırsat ürünler", // منتجات الفرصة
-  "satış ürünler", // منتجات البيع
-  "special offer products",
-  "discount products",
-  "sale items",
-  "clearance products",
-];
+// Header categories mapping to Turkish search terms
+const headerCategories = {
+  fashion: [
+    "moda giyim indirim",
+    "kadın erkek giyim kampanya",
+    "elbise pantolon gömlek indirim",
+    "ayakkabı çanta aksesuar fırsat",
+    "jean tişört kazak outlet",
+  ],
+  beauty: [
+    "kozmetik güzellik indirim",
+    "cilt bakım ürünleri kampanya",
+    "parfüm makyaj indirim",
+    "şampuan saç bakım fırsat",
+    "güzellik ürünleri outlet",
+  ],
+  sports: [
+    "spor malzemeleri indirim",
+    "spor ayakkabı giyim kampanya",
+    "fitness ekipmanları fırsat",
+    "spor çantası termos outlet",
+    "atletik ürünler indirim",
+  ],
+  electronics: [
+    "elektronik indirim",
+    "akıllı saat kulaklık kampanya",
+    "telefon tablet bilgisayar fırsat",
+    "elektronik aksesuar outlet",
+    "teknoloji ürünleri indirim",
+  ],
+  pets: [
+    "evcil hayvan ürünleri indirim",
+    "köpek kedi maması kampanya",
+    "pet aksesuar oyuncak fırsat",
+    "hayvan bakım ürünleri outlet",
+    "evcil hayvan malzemeleri indirim",
+  ],
+  vitamins: [
+    "vitamin takviye indirim",
+    "sağlık ürünleri kampanya",
+    "vitamin mineral fırsat",
+    "beslenme takviyeleri outlet",
+    "sağlık vitamin indirim",
+  ],
+};
+
+// Flatten all category queries into one array for discount search
+const discountQueries = Object.values(headerCategories).flat();
+
+// Function to check if product belongs to defined header categories
+function isProductInHeaderCategories(product: any): boolean {
+  const title = (product.title || "").toLowerCase();
+  const description = (product.snippet || "").toLowerCase();
+  const combined = title + " " + description;
+
+  // Define keywords for each header category
+  const categoryKeywords = {
+    fashion: [
+      "giyim",
+      "elbise",
+      "pantolon",
+      "gömlek",
+      "tişört",
+      "kazak",
+      "mont",
+      "ceket",
+      "ayakkabı",
+      "çanta",
+      "aksesuar",
+      "jean",
+      "etek",
+      "bluz",
+      "şort",
+      "mayo",
+      "moda",
+      "fashion",
+      "dress",
+      "shirt",
+      "pants",
+      "shoes",
+      "bag",
+      "clothing",
+      "kıyafet",
+      "terlik",
+      "bot",
+      "sandalet",
+      "spor ayakkabı",
+      "sneaker",
+    ],
+    beauty: [
+      "kozmetik",
+      "güzellik",
+      "makyaj",
+      "parfüm",
+      "krem",
+      "şampuan",
+      "saç",
+      "cilt",
+      "bakım",
+      "beauty",
+      "cosmetic",
+      "makeup",
+      "perfume",
+      "skincare",
+      "oje",
+      "ruj",
+      "maskara",
+      "fondöten",
+      "pudra",
+      "göz kalemi",
+      "dudak",
+    ],
+    sports: [
+      "spor",
+      "fitness",
+      "antrenman",
+      "koşu",
+      "yüzme",
+      "futbol",
+      "basketbol",
+      "tenis",
+      "golf",
+      "yoga",
+      "pilates",
+      "spor malzemesi",
+      "sport",
+      "athletic",
+      "gym",
+      "exercise",
+      "workout",
+      "running",
+      "swimming",
+      "football",
+      "basketball",
+    ],
+    electronics: [
+      "elektronik",
+      "telefon",
+      "bilgisayar",
+      "tablet",
+      "kulaklık",
+      "saat",
+      "akıllı",
+      "teknoloji",
+      "electronic",
+      "phone",
+      "computer",
+      "headphone",
+      "smart",
+      "technology",
+      "laptop",
+      "mouse",
+      "keyboard",
+      "charger",
+      "cable",
+    ],
+    pets: [
+      "evcil",
+      "hayvan",
+      "köpek",
+      "kedi",
+      "mama",
+      "pet",
+      "animal",
+      "dog",
+      "cat",
+      "food",
+      "oyuncak",
+      "tasma",
+      "kafes",
+      "kum",
+      "bakım",
+      "veteriner",
+      "kuş",
+    ],
+    vitamins: [
+      "vitamin",
+      "takviye",
+      "sağlık",
+      "beslenme",
+      "mineral",
+      "protein",
+      "health",
+      "supplement",
+      "nutrition",
+      "omega",
+      "probiyotik",
+      "kolajen",
+      "magnezyum",
+      "demir",
+      "çinko",
+      "kalsiyum",
+      "d3",
+      "b12",
+      "c vitamini",
+    ],
+  };
+
+  // Check if product matches any header category
+  return Object.values(categoryKeywords).some((keywords) =>
+    keywords.some((keyword) => combined.includes(keyword))
+  );
+}
 
 interface ShoppingProduct {
   id: string;
@@ -50,9 +240,37 @@ export async function GET(request: NextRequest) {
 
     let allProducts: ShoppingProduct[] = [];
 
+    // Add randomization for diverse results each time
+    // Shuffle the queries array to get different results on each request
+    const shuffledQueries = [...discountQueries].sort(
+      () => Math.random() - 0.5
+    );
+
+    // Add random variation words for more diverse results
+    const randomVariations = [
+      "en uygun",
+      "özel fiyat",
+      "büyük indirim",
+      "fırsat",
+      "kampanya",
+      "ucuz",
+      "avantajlı",
+      "ekonomik",
+      "uygun",
+      "son fiyat",
+    ];
+
     // البحث باستخدام استفسارات متعددة للحصول على منتجات متنوعة
-    for (let i = 0; i < Math.min(3, discountQueries.length); i++) {
-      const query = discountQueries[i];
+    for (let i = 0; i < Math.min(3, shuffledQueries.length); i++) {
+      let query = shuffledQueries[i];
+
+      // Add random variation 40% of the time
+      if (Math.random() > 0.6) {
+        const randomWord =
+          randomVariations[Math.floor(Math.random() * randomVariations.length)];
+        query = `${query} ${randomWord}`;
+        console.log(`🎲 Added variation: "${randomWord}" to query`);
+      }
       console.log(`🔍 Searching with query ${i + 1}: "${query}"`);
 
       try {
@@ -76,9 +294,18 @@ export async function GET(request: NextRequest) {
             `✅ Found ${shoppingResults.shopping_results.length} products for query: "${query}"`
           );
 
+          // Filter products to only include header categories
+          const filteredProducts = shoppingResults.shopping_results.filter(
+            isProductInHeaderCategories
+          );
+
+          console.log(
+            `📂 Filtered to ${filteredProducts.length} products from header categories`
+          );
+
           // معالجة النتائج
           const processedProducts = await Promise.all(
-            shoppingResults.shopping_results
+            filteredProducts
               .slice(0, 15)
               .map(async (product: any, index: number) => {
                 // التحقق من وجود تخفيض (سعر أصلي أعلى من السعر الحالي)
@@ -226,8 +453,22 @@ export async function GET(request: NextRequest) {
         index === self.findIndex((p) => p.title === product.title)
     );
 
+    // Final filter to ensure all products are from header categories
+    const categoryFilteredProducts = uniqueProducts.filter((product) => {
+      // Create a mock product object for the filter function
+      const mockProduct = {
+        title: product.originalTitle || product.title,
+        snippet: product.originalDescription || product.description,
+      };
+      return isProductInHeaderCategories(mockProduct);
+    });
+
+    console.log(
+      `🎯 Final category filter: ${uniqueProducts.length} → ${categoryFilteredProducts.length} products`
+    );
+
     // ترتيب المنتجات حسب وجود تخفيض أولاً، ثم حسب التقييم
-    uniqueProducts.sort((a, b) => {
+    categoryFilteredProducts.sort((a, b) => {
       const aHasDiscount = a.originalPrice && a.originalPrice > a.price ? 1 : 0;
       const bHasDiscount = b.originalPrice && b.originalPrice > b.price ? 1 : 0;
 
@@ -239,7 +480,7 @@ export async function GET(request: NextRequest) {
     });
 
     // الحد الأقصى 50 منتج
-    const finalProducts = uniqueProducts.slice(0, 50);
+    const finalProducts = categoryFilteredProducts.slice(0, 50);
 
     console.log(
       `✅ Returning ${finalProducts.length} unique discount products`
