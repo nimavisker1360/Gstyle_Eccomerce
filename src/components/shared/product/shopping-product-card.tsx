@@ -111,24 +111,26 @@ export default function ShoppingProductCard({
 
   return (
     <Card
-      className={`w-full max-w-[200px] hover:shadow-lg transition-shadow duration-200 ${
+      className={`w-full max-w-[220px] hover:shadow-lg transition-shadow duration-200 ${
         isSearchResult ? "border-2 border-green-500 shadow-green-100" : ""
       }`}
     >
       <CardContent className="p-3 flex flex-col">
         {/* تصویر محصول */}
         <div className="relative mb-2">
-          <Image
-            src={product.image || "/images/placeholder.jpg"}
-            alt={product.title}
-            width={200}
-            height={100}
-            className="w-full h-20 object-cover rounded-lg"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/images/placeholder.jpg";
-            }}
-          />
+          <div className="relative w-full h-52 bg-gray-50 rounded-lg overflow-hidden">
+            <Image
+              src={product.image || "/images/placeholder.jpg"}
+              alt={product.title}
+              fill
+              className="object-contain hover:scale-105 transition-transform duration-200"
+              sizes="200px"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/placeholder.jpg";
+              }}
+            />
+          </div>
           {hasDiscount && (
             <Badge className="absolute top-1 left-1 bg-red-500 text-white text-xs">
               {discountPercentage}% تخفیف

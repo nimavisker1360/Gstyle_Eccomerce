@@ -330,7 +330,7 @@ export default function IntelligentSearch({
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
                 {products.map((product) => (
                   <Card
                     key={product.id}
@@ -339,13 +339,15 @@ export default function IntelligentSearch({
                     <CardContent className="p-4">
                       {/* Product Image */}
                       <div className="relative mb-4">
-                        <Image
-                          src={product.image}
-                          alt={product.title}
-                          width={300}
-                          height={192}
-                          className="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
-                        />
+                        <div className="relative w-full h-44 bg-gray-50 rounded-lg overflow-hidden">
+                          <Image
+                            src={product.image}
+                            alt={product.title}
+                            fill
+                            className="object-contain group-hover:scale-105 transition-transform duration-300"
+                            sizes="300px"
+                          />
+                        </div>
                         {product.originalPrice &&
                           product.originalPrice > product.price && (
                             <Badge className="absolute top-2 right-2 bg-red-500 text-white">
@@ -427,10 +429,10 @@ export default function IntelligentSearch({
 
       {/* Loading Skeleton */}
       {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <Card key={index} className="p-4">
-              <Skeleton className="w-full h-48 mb-4" />
+              <Skeleton className="w-full h-44 mb-4" />
               <Skeleton className="w-3/4 h-4 mb-2" />
               <Skeleton className="w-full h-3 mb-2" />
               <Skeleton className="w-1/2 h-4 mb-4" />
