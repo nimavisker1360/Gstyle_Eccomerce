@@ -3,59 +3,11 @@
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-const fashionCategories = {
-  زنانه: [
-    "پیراهن",
-    "تاپ و بادی",
-    "شلوار جین",
-    "شومیز",
-    "تی شرت",
-    "شلوارک و اسکورت",
-    "دامن",
-    "ست",
-    "ژاکت و پلیور",
-    "بافت",
-    "ژیله",
-    "سویشرت",
-    "کت و جکت",
-    "کفش",
-    "کیف",
-    "مایو",
-    "اکسسوری",
-    "لباس زیر",
-    "پیژاما",
-  ],
-  مردانه: [
-    "شلوارک",
-    "شلوار",
-    "پیراهن",
-    "تی شرت",
-    "پولوشرت",
-    "جین",
-    "ست",
-    "کت و شلوار",
-    "پلیور",
-    "مایو",
-    "هودی و سویشرت",
-    "لین",
-    "بلیزر",
-    "پالتو",
-    "کاپشن و بارانی",
-    "کفش",
-    "کیف",
-    "اکسسوری",
-  ],
-  "بچه گانه": [
-    "دختر 1.5 تا 6 سال",
-    "دختر 6 تا 14 سال",
-    "پسر 1.5 تا 6 سال",
-    "پسر 6 تا 14 سال",
-    "نوزاد 0 تا 18 ماه",
-    "اسباب بازی",
-  ],
+const electronicsCategories = {
+  الکترونیک: ["ساعت هوشمند", "هدفون", "لوازم جانبی"],
 };
 
-export default function FashionDropdown() {
+export default function ElectronicsDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -88,9 +40,9 @@ export default function FashionDropdown() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Main Fashion Button */}
+      {/* Main Electronics Button */}
       <div className="header-button text-blue-700 hover:text-green-600 font-medium transition-colors flex items-center gap-1">
-        مد و پوشاک
+        الکترونیک
         <ChevronDown className="w-4 h-4" />
       </div>
 
@@ -102,15 +54,12 @@ export default function FashionDropdown() {
             : "opacity-0 invisible transform -translate-y-2 scale-95 pointer-events-none"
         }`}
       >
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[900px] p-4">
-          <div className="grid grid-cols-3 gap-6">
-            {Object.entries(fashionCategories).map(
+        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[300px] p-4">
+          <div className="space-y-2">
+            {Object.entries(electronicsCategories).map(
               ([mainCategory, subCategories]) => (
                 <div key={mainCategory} className="space-y-2">
-                  <h3 className="font-bold text-base text-blue-700 border-b border-green-300 pb-1 mb-2">
-                    {mainCategory}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-1">
+                  <div className="grid grid-cols-1 gap-1">
                     {subCategories.map((item) => (
                       <div
                         key={item}

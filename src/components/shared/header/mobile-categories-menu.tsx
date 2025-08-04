@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 import data from "@/lib/data";
 
 // Categories data for dropdowns
@@ -47,7 +48,14 @@ const fashionCategories = {
     "کیف",
     "اکسسوری",
   ],
-  "بچه گانه": ["دختر 1.5 تا 6 سال", "دختر 6 تا 14 سال", "نوزاد 0 تا 18 ماه"],
+  "بچه گانه": [
+    "دختر 1.5 تا 6 سال",
+    "دختر 6 تا 14 سال",
+    "پسر 1.5 تا 6 سال",
+    "پسر 6 تا 14 سال",
+    "نوزاد 0 تا 18 ماه",
+    "اسباب بازی",
+  ],
 };
 
 const beautyCategories = {
@@ -64,6 +72,46 @@ const beautyCategories = {
     "انواع ویتامین ها",
     "انواع مکملهای ورزشی",
     "انواع دمنوش و ماچا و قهوه",
+  ],
+};
+
+const sportsCategories = {
+  "لوازم ورزشی": [
+    "کفش",
+    "لباس",
+    "اکسسوری",
+    "مایو",
+    "ساک ورزشی",
+    "ترموس",
+    "قمقمه",
+  ],
+};
+
+const electronicsCategories = {
+  الکترونیک: ["ساعت هوشمند", "هدفون", "لوازم جانبی"],
+};
+
+const petsCategories = {
+  "حیوانات خانگی": [
+    "غذای سگ و گربه",
+    "تشویقی سگ و گربه",
+    "قلاده",
+    "لباس و لوازم جانبی",
+    "اسباب بازی",
+    "ویتامین",
+    "محصولات بهداشتی",
+  ],
+};
+
+const vitaminCategories = {
+  "ویتامین و دارو": [
+    "مولتی ویتامین",
+    "کلسیم",
+    "ویتامین D",
+    "ملاتونین",
+    "ویتامین C",
+    "پوست، مو، ناخن",
+    "سایر",
   ],
 };
 
@@ -85,14 +133,19 @@ export default function MobileCategoriesMenu() {
   };
 
   const renderSubCategories = (categoryName: string, subCategories: any) => {
+    const showBlueTitles =
+      categoryName === "مد و پوشاک" || categoryName === "آرایش و زیبایی";
+
     return (
       <div className="mt-2 mr-4 space-y-1">
         {Object.entries(subCategories).map(([mainCategory, items]) => (
           <div key={mainCategory} className="space-y-1">
-            <h4 className="font-medium text-blue-600 hover:text-blue-800 text-sm border-b border-green-200 pb-1 cursor-pointer transition-colors duration-200">
-              {mainCategory}
-            </h4>
-            <div className="space-y-1 mr-2">
+            {showBlueTitles && (
+              <h4 className="font-medium text-blue-600 hover:text-blue-800 text-sm border-b border-green-200 pb-1 cursor-pointer transition-colors duration-200">
+                {mainCategory}
+              </h4>
+            )}
+            <div className={`space-y-1 ${showBlueTitles ? "mr-2" : ""}`}>
               {(items as string[]).map((item) => (
                 <div
                   key={item}
@@ -185,10 +238,86 @@ export default function MobileCategoriesMenu() {
                   {expandedCategory === menu.name &&
                     renderSubCategories(menu.name, beautyCategories)}
                 </div>
-              ) : (
-                <div className="block p-4 font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-50 cursor-pointer transition-colors duration-200">
-                  {menu.name}
+              ) : menu.name === "لوازم ورزشی" ? (
+                <div>
+                  <button
+                    onClick={() => toggleCategory(menu.name)}
+                    className="w-full flex items-center justify-between p-4 text-right hover:bg-blue-50 hover:text-blue-900 transition-colors duration-200"
+                  >
+                    <span className="font-medium text-blue-700">
+                      {menu.name}
+                    </span>
+                    {expandedCategory === menu.name ? (
+                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedCategory === menu.name &&
+                    renderSubCategories(menu.name, sportsCategories)}
                 </div>
+              ) : menu.name === "الکترونیک" ? (
+                <div>
+                  <button
+                    onClick={() => toggleCategory(menu.name)}
+                    className="w-full flex items-center justify-between p-4 text-right hover:bg-blue-50 hover:text-blue-900 transition-colors duration-200"
+                  >
+                    <span className="font-medium text-blue-700">
+                      {menu.name}
+                    </span>
+                    {expandedCategory === menu.name ? (
+                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedCategory === menu.name &&
+                    renderSubCategories(menu.name, electronicsCategories)}
+                </div>
+              ) : menu.name === "حیوانات خانگی" ? (
+                <div>
+                  <button
+                    onClick={() => toggleCategory(menu.name)}
+                    className="w-full flex items-center justify-between p-4 text-right hover:bg-blue-50 hover:text-blue-900 transition-colors duration-200"
+                  >
+                    <span className="font-medium text-blue-700">
+                      {menu.name}
+                    </span>
+                    {expandedCategory === menu.name ? (
+                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedCategory === menu.name &&
+                    renderSubCategories(menu.name, petsCategories)}
+                </div>
+              ) : menu.name === "ویتامین و دارو" ? (
+                <div>
+                  <button
+                    onClick={() => toggleCategory(menu.name)}
+                    className="w-full flex items-center justify-between p-4 text-right hover:bg-blue-50 hover:text-blue-900 transition-colors duration-200"
+                  >
+                    <span className="font-medium text-blue-700">
+                      {menu.name}
+                    </span>
+                    {expandedCategory === menu.name ? (
+                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedCategory === menu.name &&
+                    renderSubCategories(menu.name, vitaminCategories)}
+                </div>
+              ) : (
+                <Link
+                  href={menu.href}
+                  className="block p-4 font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-50 cursor-pointer transition-colors duration-200"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {menu.name}
+                </Link>
               )}
             </div>
           ))}

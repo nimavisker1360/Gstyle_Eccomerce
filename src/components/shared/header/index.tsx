@@ -9,6 +9,10 @@ import CartButton from "./cart-button";
 import UserButton from "./user-button";
 import FashionDropdown from "./fashion-dropdown";
 import BeautyDropdown from "./beauty-dropdown";
+import SportsDropdown from "./sports-dropdown";
+import ElectronicsDropdown from "./electronics-dropdown";
+import PetsDropdown from "./pets-dropdown";
+import VitaminDropdown from "./vitamin-dropdown";
 import MobileCategoriesMenu from "./mobile-categories-menu";
 
 export default function Header() {
@@ -70,13 +74,22 @@ export default function Header() {
                 <FashionDropdown key={menu.href} />
               ) : menu.name === "آرایش و زیبایی" ? (
                 <BeautyDropdown key={menu.href} />
+              ) : menu.name === "لوازم ورزشی" ? (
+                <SportsDropdown key={menu.href} />
+              ) : menu.name === "الکترونیک" ? (
+                <ElectronicsDropdown key={menu.href} />
+              ) : menu.name === "حیوانات خانگی" ? (
+                <PetsDropdown key={menu.href} />
+              ) : menu.name === "ویتامین و دارو" ? (
+                <VitaminDropdown key={menu.href} />
               ) : (
-                <div
+                <Link
                   key={menu.href}
+                  href={menu.href}
                   className="header-button text-blue-700 hover:text-green-600 font-medium transition-colors"
                 >
                   {menu.name}
-                </div>
+                </Link>
               )
             )}
           </div>

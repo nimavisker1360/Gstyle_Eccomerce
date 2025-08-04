@@ -1073,12 +1073,12 @@ const data: Data = {
       href: "/search?category=آرایش و زیبایی",
     },
     {
-      name: "موبایل و کامپیوتر",
-      href: "/search?category=موبایل و کامپیوتر",
+      name: "لوازم ورزشی",
+      href: "/search?category=لوازم ورزشی",
     },
     {
-      name: "اسباب بازی و گجت",
-      href: "/search?category=اسباب بازی و گجت",
+      name: "الکترونیک",
+      href: "/accessories",
     },
     {
       name: "حیوانات خانگی",

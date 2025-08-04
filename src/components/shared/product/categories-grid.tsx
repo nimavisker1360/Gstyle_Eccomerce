@@ -20,42 +20,46 @@ const categories: Category[] = [
     name: "Fashion & Clothing",
     persianName: "مد و پوشاک",
     image: "/images/fashion.jpg",
-    searchQuery: "مد و پوشاک",
+    searchQuery:
+      "پیراهن تاپ بادی شلوار جین شومیز تی شرت شلوارک اسکورت دامن ست ژاکت پلیور بافت ژیله سویشرت کت جکت کفش کیف مایو اکسسوری لباس زیر پیژاما شلوارک شلوار پیراهن تی شرت پولوشرت جین کت شلوار پلیور مایو هودی لین بلیزر پالتو کاپشن بارانی کفش کیف اکسسوری دختر پسر نوزاد اسباب بازی",
   },
   {
     id: "beauty",
     name: "Beauty & Cosmetics",
     persianName: "آرایش و زیبایی",
     image: "/images/buity.jpg",
-    searchQuery: "آرایش و زیبایی",
+    searchQuery:
+      "ست مراقبت پوستی محصولات ضد پیری محصولات پوستی محصولات آفتاب محصولات مراقبت از پوست عطر ادکلن بادی اسپلش محصولات مراقبت از بدن محصولات مراقبت مو رنگ مو شانه برس شامپو انواع ویتامین ها انواع مکملهای ورزشی انواع دمنوش ماچا قهوه",
   },
   {
     id: "electronics",
-    name: "Mobile & Computer",
-    persianName: "موبایل و کامپیوتر",
+    name: "Electronics",
+    persianName: "الکترونیک",
     image: "/images/laptob.jpg",
-    searchQuery: "موبایل و کامپیوتر",
+    searchQuery: "ساعت هوشمند هدفون لوازم جانبی",
   },
   {
-    id: "toys",
-    name: "Toys & Gadgets",
-    persianName: "اسباب بازی و گجت",
-    image: "/images/toys.jpg",
-    searchQuery: "اسباب بازی و گجت",
+    id: "sports",
+    name: "Sports Equipment",
+    persianName: "لوازم ورزشی",
+    image: "/images/sports.png",
+    searchQuery: "کفش لباس اکسسوری مایو ساک ورزشی ترموس قمقمه",
   },
   {
     id: "pets",
     name: "Pet Supplies",
     persianName: "حیوانات خانگی",
     image: "/images/pets.jpg",
-    searchQuery: "حیوانات خانگی",
+    searchQuery:
+      "غذای سگ گربه تشویقی قلاده لباس لوازم جانبی اسباب بازی ویتامین محصولات بهداشتی",
   },
   {
     id: "health",
     name: "Vitamins & Medicine",
     persianName: "ویتامین و دارو",
     image: "/images/drugs.jpg",
-    searchQuery: "ویتامین و دارو",
+    searchQuery:
+      "مولتی ویتامین کلسیم ویتامین D ملاتونین ویتامین C پوست مو ناخن",
   },
 ];
 
