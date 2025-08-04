@@ -22,6 +22,16 @@ const config: Config = {
       animation: {
         shimmer: "shimmer 2s infinite",
         progress: "progress 3s ease-in-out infinite",
+        "fade-in": "fadeIn 0.5s ease-in-out",
+        "fade-out": "fadeOut 0.3s ease-in-out",
+        "slide-in-up": "slideInUp 0.4s ease-out",
+        "slide-out-down": "slideOutDown 0.3s ease-in",
+        "scale-in": "scaleIn 0.3s ease-out",
+        "scale-out": "scaleOut 0.2s ease-in",
+        "bounce-gentle": "bounceGentle 0.6s ease-out",
+        "pulse-gentle": "pulseGentle 2s ease-in-out infinite",
+        "cart-bounce": "cartBounce 0.5s ease-out",
+        "brand-hover": "brandHover 0.3s ease-in-out",
       },
       keyframes: {
         shimmer: {
@@ -32,6 +42,50 @@ const config: Config = {
           "0%": { width: "0%" },
           "50%": { width: "75%" },
           "100%": { width: "95%" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeOut: {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(-10px)" },
+        },
+        slideInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideOutDown: {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(20px)" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        scaleOut: {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(0.8)" },
+        },
+        bounceGentle: {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
+        pulseGentle: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.8" },
+        },
+        cartBounce: {
+          "0%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.2)" },
+          "50%": { transform: "scale(0.95)" },
+          "100%": { transform: "scale(1)" },
+        },
+        brandHover: {
+          "0%": { transform: "scale(1) rotate(0deg)" },
+          "50%": { transform: "scale(1.05) rotate(2deg)" },
+          "100%": { transform: "scale(1) rotate(0deg)" },
         },
       },
       colors: {
