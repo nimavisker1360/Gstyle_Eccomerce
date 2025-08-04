@@ -257,9 +257,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Add randomization for diverse results
+    let cleanQuery = query.replace(/\s+\d{13}$/, "").trim();
+
+    // Fashion-specific random variations
+    const fashionVariations = [
+      "modaya uygun",
+      "şık",
+      "trend",
+      "kaliteli",
+      "özel",
+      "modern",
+      "popüler",
+      "yeni sezon",
+      "stil",
+      "güzel",
+    ];
+    const randomWord =
+      fashionVariations[Math.floor(Math.random() * fashionVariations.length)];
+
+    if (Math.random() > 0.4) {
+      // 60% chance
+      cleanQuery = `${cleanQuery} ${randomWord}`;
+      console.log(`🎲 Added fashion variation: "${randomWord}"`);
+    }
+
     // Step 1: Translate Persian to Turkish
     console.log("🔄 Step 1: Translating Persian to Turkish...");
-    const turkishQuery = await translatePersianToTurkish(query);
+    const turkishQuery = await translatePersianToTurkish(cleanQuery);
     console.log(`✅ Persian to Turkish: "${query}" → "${turkishQuery}"`);
 
     // Step 2: Enhance Turkish query

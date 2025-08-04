@@ -276,9 +276,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Add randomization for diverse results
+    let cleanQuery = query.replace(/\s+\d{13}$/, "").trim();
+
+    // Sports-specific random variations
+    const sportsVariations = [
+      "profesyonel",
+      "kaliteli",
+      "dayanıklı",
+      "özel",
+      "performans",
+      "athletic",
+      "premium",
+      "özel fiyat",
+      "trend",
+      "popüler",
+    ];
+    const randomWord =
+      sportsVariations[Math.floor(Math.random() * sportsVariations.length)];
+
+    if (Math.random() > 0.4) {
+      // 60% chance
+      cleanQuery = `${cleanQuery} ${randomWord}`;
+      console.log(`🎲 Added sports variation: "${randomWord}"`);
+    }
+
     // Step 1: Translate Persian query to Turkish
     console.log("🔄 Step 1: Translating Persian to Turkish...");
-    const turkishQuery = await translatePersianToTurkish(query);
+    const turkishQuery = await translatePersianToTurkish(cleanQuery);
     console.log(`✅ Persian to Turkish: "${query}" → "${turkishQuery}"`);
 
     // Step 2: Enhance Turkish query for better sports product search

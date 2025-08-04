@@ -168,14 +168,40 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Add randomization to search results by modifying query slightly
+    // Remove timestamp if present to clean the query
+    let cleanQuery = query.replace(/\s+\d{13}$/, "").trim();
+
+    // Add random variation words for diverse results
+    const randomVariations = [
+      "kaliteli",
+      "uygun fiyat",
+      "en iyi",
+      "popüler",
+      "trend",
+      "yeni",
+      "özel",
+      "indirimli",
+      "ucuz",
+      "premium",
+    ];
+    const randomWord =
+      randomVariations[Math.floor(Math.random() * randomVariations.length)];
+    const shouldAddVariation = Math.random() > 0.5; // 50% chance
+
+    if (shouldAddVariation) {
+      cleanQuery = `${cleanQuery} ${randomWord}`;
+      console.log(`🎲 Added random variation: "${randomWord}"`);
+    }
+
     // ترجمه و بهبود کوئری جستجو با OpenAI - فقط اگر API key موجود باشد
-    let enhancedQuery = query;
+    let enhancedQuery = cleanQuery;
     if (process.env.OPENAI_API_KEY) {
       try {
         const enhancedQueryPrompt = `
           من یک کوئری جستجو به زبان فارسی دارم که باید آن را برای جستجو در فروشگاه‌های آنلاین ترکیه بهبود دهم.
 
-          کوئری اصلی: "${query}"
+          کوئری اصلی: "${cleanQuery}"
 
           لطفاً:
           1. این کوئری را به ترکی ترجمه کنید
@@ -193,13 +219,13 @@ export async function GET(request: NextRequest) {
           temperature: 0.3,
         });
 
-        enhancedQuery = text.trim() || query;
+        enhancedQuery = text.trim() || cleanQuery;
 
         console.log(`✅ Query enhanced: "${query}" → "${enhancedQuery}"`);
       } catch (error) {
         console.error("❌ Error enhancing query:", error);
         // اگر OpenAI کار نکرد، از کوئری اصلی استفاده کن
-        enhancedQuery = query;
+        enhancedQuery = cleanQuery;
       }
     } else {
       console.log("⚠️ OpenAI API key not configured, using original query");

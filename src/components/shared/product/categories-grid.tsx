@@ -14,52 +14,106 @@ interface Category {
   searchQuery: string;
 }
 
+// Function to get random search queries for each category
+function getRandomSearchQuery(categoryId: string): string {
+  const categoryQueries: Record<string, string[]> = {
+    fashion: [
+      "پیراهن تاپ بادی شلوار جین شومیز تی شرت شلوارک",
+      "ژاکت پلیور بافت ژیله سویشرت کت جکت کفش",
+      "دامن ست مایو اکسسوری لباس زیر پیژاما",
+      "پولوشرت جین کت شلوار پلیور مایو هودی",
+      "لین بلیزر پالتو کاپشن بارانی کفش کیف",
+      "لباس زیبا شیک جذاب مدرن کیفیت عالی",
+    ],
+    beauty: [
+      "ست مراقبت پوستی محصولات ضد پیری کرم",
+      "عطر ادکلن بادی اسپلش محصولات مراقبت بدن",
+      "محصولات مراقبت مو رنگ مو شانپو کراتین",
+      "لوازم آرایش رژ لب ریمل فونداسیون پودر",
+      "کرم آفتاب ضد آفتاب محصولات پوستی",
+      "ویتامین های زیبایی کلاژن سرم ضد چروک",
+    ],
+    electronics: [
+      "ساعت هوشمند Smart Watch اپل واچ",
+      "هدفون بی سیم AirPods هدست گیمینگ",
+      "لوازم جانبی موبایل کیف محافظ شارژر",
+      "اسپیکر بلوتوث پاور بانک کابل شارژ",
+      "لپ تاپ تبلت کیبورد ماوس وب کم",
+      "گوشی موبایل Samsung iPhone Xiaomi",
+    ],
+    sports: [
+      "کفش ورزشی نایک آدیداس پوما نیو بالانس",
+      "لباس ورزشی تی شرت شلوارک ست ورزشی",
+      "اکسسوری ورزشی ساک ورزشی ترموس قمقمه",
+      "لوازم ورزشی فیتنس دمبل کش ورزشی",
+      "مایو شنا عینک شنا کلاه شنا",
+      "کفش پیاده روی جاگینگ دویدن کوهنوردی",
+    ],
+    pets: [
+      "غذای سگ غذای گربه تشویقی حیوانات",
+      "قلاده سگ قلاده گربه لباس حیوانات",
+      "لوازم جانبی اسباب بازی حیوانات خانگی",
+      "ویتامین حیوانات مکمل غذایی پت شاپ",
+      "محصولات بهداشتی شامپو حیوانات",
+      "جعبه ماسه گربه ظرف آب غذا حیوانات",
+    ],
+    health: [
+      "مولتی ویتامین کمپلکس ویتامین B12",
+      "کلسیم منیزیم ویتامین D3 استخوان",
+      "ملاتونین خواب آرامش استرس",
+      "ویتامین C ایمنی آنتی اکسیدان",
+      "پوست مو ناخن بیوتین کراتین",
+      "پروبیوتیک گوارش آنزیم هاضمه",
+    ],
+  };
+
+  const queries = categoryQueries[categoryId] || ["محصولات"];
+  const randomIndex = Math.floor(Math.random() * queries.length);
+  return queries[randomIndex];
+}
+
 const categories: Category[] = [
   {
     id: "fashion",
     name: "Fashion & Clothing",
     persianName: "مد و پوشاک",
     image: "/images/fashion.jpg",
-    searchQuery:
-      "پیراهن تاپ بادی شلوار جین شومیز تی شرت شلوارک اسکورت دامن ست ژاکت پلیور بافت ژیله سویشرت کت جکت کفش کیف مایو اکسسوری لباس زیر پیژاما شلوارک شلوار پیراهن تی شرت پولوشرت جین کت شلوار پلیور مایو هودی لین بلیزر پالتو کاپشن بارانی کفش کیف اکسسوری دختر پسر نوزاد اسباب بازی",
+    searchQuery: "",
   },
   {
     id: "beauty",
     name: "Beauty & Cosmetics",
     persianName: "آرایش و زیبایی",
     image: "/images/buity.jpg",
-    searchQuery:
-      "ست مراقبت پوستی محصولات ضد پیری محصولات پوستی محصولات آفتاب محصولات مراقبت از پوست عطر ادکلن بادی اسپلش محصولات مراقبت از بدن محصولات مراقبت مو رنگ مو شانه برس شامپو انواع ویتامین ها انواع مکملهای ورزشی انواع دمنوش ماچا قهوه",
+    searchQuery: "",
   },
   {
     id: "electronics",
     name: "Electronics",
     persianName: "الکترونیک",
     image: "/images/laptob.jpg",
-    searchQuery: "ساعت هوشمند هدفون لوازم جانبی",
+    searchQuery: "",
   },
   {
     id: "sports",
     name: "Sports Equipment",
     persianName: "لوازم ورزشی",
     image: "/images/sports.png",
-    searchQuery: "کفش لباس اکسسوری مایو ساک ورزشی ترموس قمقمه",
+    searchQuery: "",
   },
   {
     id: "pets",
     name: "Pet Supplies",
     persianName: "حیوانات خانگی",
     image: "/images/pets.jpg",
-    searchQuery:
-      "غذای سگ گربه تشویقی قلاده لباس لوازم جانبی اسباب بازی ویتامین محصولات بهداشتی",
+    searchQuery: "",
   },
   {
     id: "health",
     name: "Vitamins & Medicine",
     persianName: "ویتامین و دارو",
     image: "/images/drugs.jpg",
-    searchQuery:
-      "مولتی ویتامین کلسیم ویتامین D ملاتونین ویتامین C پوست مو ناخن",
+    searchQuery: "",
   },
 ];
 
@@ -86,42 +140,49 @@ export default function CategoriesGrid() {
 
         {/* Static Grid (6 categories only) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-24">
-          {categories.map((category) => (
-            <div key={category.id} className="md:aspect-square">
-              <Link
-                href={`/search?q=${encodeURIComponent(category.searchQuery)}`}
-                className="group block h-full"
-              >
-                <Card className="w-full h-full hover:shadow-lg transition-shadow duration-200 bg-white border border-blue-300 hover:border-blue-500">
-                  <CardContent className="p-4 h-full flex flex-col">
-                    {/* Category Image */}
-                    <div className="relative mb-3 flex-1">
-                      <div className="relative w-full h-32 md:h-36 bg-gray-50 rounded-lg overflow-hidden">
-                        <Image
-                          src={category.image}
-                          alt={category.persianName}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform duration-200"
-                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/placeholder.jpg";
-                          }}
-                        />
-                      </div>
-                    </div>
+          {categories.map((category) => {
+            // Generate random search query for each category on every render
+            const randomQuery = getRandomSearchQuery(category.id);
+            // Add timestamp to ensure fresh results
+            const timestampedQuery = `${randomQuery} ${Date.now()}`;
 
-                    {/* Category Name */}
-                    <div className="text-center">
-                      <h3 className="text-sm font-medium text-gray-800 group-hover:text-green-600 transition-colors">
-                        {category.persianName}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          ))}
+            return (
+              <div key={category.id} className="md:aspect-square">
+                <Link
+                  href={`/search?q=${encodeURIComponent(timestampedQuery)}`}
+                  className="group block h-full"
+                >
+                  <Card className="w-full h-full hover:shadow-lg transition-shadow duration-200 bg-white border border-blue-300 hover:border-blue-500">
+                    <CardContent className="p-4 h-full flex flex-col">
+                      {/* Category Image */}
+                      <div className="relative mb-3 flex-1">
+                        <div className="relative w-full h-32 md:h-36 bg-gray-50 rounded-lg overflow-hidden">
+                          <Image
+                            src={category.image}
+                            alt={category.persianName}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-200"
+                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/placeholder.jpg";
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Category Name */}
+                      <div className="text-center">
+                        <h3 className="text-sm font-medium text-gray-800 group-hover:text-green-600 transition-colors">
+                          {category.persianName}
+                        </h3>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
