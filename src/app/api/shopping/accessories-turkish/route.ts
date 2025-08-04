@@ -69,7 +69,6 @@ function convertToTurkishKeywords(query: string): string {
     "کابل iron": "demir kablo",
     "کابل cobalt": "kobalt kablo",
     "کابل nickel": "nikel kablo",
-    "کابل copper": "bakır kablo",
     "کابل zinc": "çinko kablo",
     "کابل cadmium": "kadmiyum kablo",
     "کابل mercury": "cıva kablo",

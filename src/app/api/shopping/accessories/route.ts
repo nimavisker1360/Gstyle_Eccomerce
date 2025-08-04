@@ -382,7 +382,6 @@ async function enhanceSearchQuery(query: string): Promise<string> {
     const { text: enhancedQuery } = await generateText({
       model: openai("gpt-3.5-turbo"),
       prompt: enhancedQueryPrompt,
-      maxTokens: 100,
     });
 
     console.log(`🔧 Enhanced query: "${query}" -> "${enhancedQuery}"`);
@@ -411,7 +410,6 @@ async function translateToPersian(text: string): Promise<string> {
     const { text: translatedText } = await generateText({
       model: openai("gpt-3.5-turbo"),
       prompt: translationPrompt,
-      maxTokens: 200,
     });
 
     return translatedText.trim();

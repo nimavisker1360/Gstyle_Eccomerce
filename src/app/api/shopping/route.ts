@@ -213,7 +213,7 @@ export async function GET(request: NextRequest) {
       q: enhancedQuery,
       gl: "tr", // ترکیه
       hl: "tr", // زبان ترکی
-      num: 30, // افزایش تعداد نتایج برای انتخاب بهتر
+      num: 50, // افزایش تعداد نتایج برای انتخاب بهتر
       device: "desktop", // اجباری برای دسکتاپ
       api_key: process.env.SERPAPI_KEY,
     };
@@ -261,8 +261,8 @@ export async function GET(request: NextRequest) {
       `🔍 Total products from SerpAPI: ${shoppingResults.shopping_results.length}`
     );
 
-    // محدود کردن نتایج به 15 محصول
-    const limitedResults = shoppingResults.shopping_results.slice(0, 15);
+    // محدود کردن نتایج به 50 محصول
+    const limitedResults = shoppingResults.shopping_results.slice(0, 50);
 
     console.log(`📊 Processing ${limitedResults.length} products`);
 

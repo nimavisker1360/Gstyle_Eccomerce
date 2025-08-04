@@ -25,19 +25,19 @@ interface ShoppingProduct {
   delivery: string;
 }
 
-interface SearchProductsLayoutProps {
+interface AccessoriesSearchLayoutProps {
   telegramSupport?: string;
   initialQuery?: string;
   hideSearchBar?: boolean;
   allowEmpty?: boolean;
 }
 
-export default function SearchProductsLayout({
+export default function AccessoriesSearchLayout({
   telegramSupport,
   initialQuery,
   hideSearchBar = false,
   allowEmpty = false,
-}: SearchProductsLayoutProps) {
+}: AccessoriesSearchLayoutProps) {
   const [products, setProducts] = useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,14 +54,14 @@ export default function SearchProductsLayout({
     setCurrentSearch(query);
 
     try {
-      console.log(`🔍 Searching for: "${query}"`);
+      console.log(`🔍 Searching for accessories: "${query}"`);
 
       const response = await fetch(
-        `/api/shopping?q=${encodeURIComponent(query)}`
+        `/api/shopping/accessories?q=${encodeURIComponent(query)}`
       );
       const data = await response.json();
 
-      console.log(`📊 Search response:`, {
+      console.log(`📊 Accessories search response:`, {
         status: response.status,
         productsCount: data.products?.length || 0,
         message: data.message,
@@ -77,18 +77,18 @@ export default function SearchProductsLayout({
 
       // Log search results for debugging
       if (data.products && data.products.length > 0) {
-        console.log(`✅ Found ${data.products.length} products`);
+        console.log(`✅ Found ${data.products.length} accessories`);
         data.products.forEach((product: ShoppingProduct, index: number) => {
           console.log(
-            `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
+            `📦 Accessory ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
           );
         });
       } else {
-        console.log(`❌ No products found for query: "${query}"`);
+        console.log(`❌ No accessories found for query: "${query}"`);
       }
     } catch (err) {
-      console.error("❌ Search error:", err);
-      setError("خطا در دریافت محصولات. لطفاً دوباره تلاش کنید.");
+      console.error("❌ Accessories search error:", err);
+      setError("خطا در دریافت لوازم جانبی. لطفاً دوباره تلاش کنید.");
       setProducts([]);
       setMessage("");
     } finally {
@@ -98,59 +98,57 @@ export default function SearchProductsLayout({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSearch(searchQuery);
+    if (searchQuery.trim()) {
+      handleSearch(searchQuery.trim());
+    }
   };
 
-  // جستجوی اولیه - فقط اگر query وجود داشته باشد
+  // Initialize with initial query if provided
   useEffect(() => {
-    if (initialQuery && initialQuery.trim()) {
-      console.log(`🚀 Initial search for: "${initialQuery}"`);
+    if (initialQuery && !currentSearch) {
+      setSearchQuery(initialQuery);
       handleSearch(initialQuery);
     }
-  }, [initialQuery]);
-
-  // اگر هیچ query اولیه‌ای وجود نداشته باشد و allowEmpty false باشد، هیچ محصولی نمایش نده
-  if ((!initialQuery || !initialQuery.trim()) && !allowEmpty) {
-    return null;
-  }
+  }, [initialQuery, currentSearch]);
 
   const renderProducts = () => {
     if (loading || products.length === 0) return null;
 
     return (
-      <div className="space-y-8">
-        {/* همه محصولات در گرید */}
-        {products.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-800 text-right">
-                محصولات پیشنهادی
-              </h3>
-              <Link
-                href={`/search?q=${encodeURIComponent(currentSearch)}&view=all`}
-                passHref
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-green-600 border-green-600 hover:bg-green-50"
-                >
-                  مشاهده بیشتر
-                  <ChevronRight className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-                </Button>
-              </Link>
-            </div>
+      <div className="w-full">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            نتایج جستجو برای &quot;{currentSearch}&quot;
+          </h2>
+          <p className="text-sm text-gray-600">
+            {products.length} لوازم جانبی پیدا شد
+          </p>
+        </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-3 w-full">
-              {products.slice(0, 50).map((product) => (
-                <ShoppingProductCard
-                  key={product.id}
-                  product={product}
-                  telegramSupport={telegramSupport || "@gstyle_support"}
-                  isSearchResult={true}
-                />
-              ))}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ShoppingProductCard
+              key={product.id}
+              product={product}
+              telegramSupport={telegramSupport}
+            />
+          ))}
+        </div>
+
+        {telegramSupport && (
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600 mb-2">
+              نیاز به راهنمایی بیشتر دارید؟
+            </p>
+            <Link
+              href={`https://t.me/${telegramSupport.replace("@", "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm"
+            >
+              با ما در تلگرام در ارتباط باشید
+              <ChevronRight className="w-4 h-4 mr-1 rtl:ml-1 rtl:mr-0" />
+            </Link>
           </div>
         )}
       </div>
@@ -161,49 +159,70 @@ export default function SearchProductsLayout({
     if (hideSearchBar) return null;
 
     return (
-      <div className="mb-6">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <Input
-            type="text"
-            placeholder="جستجوی محصولات از ترکیه..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
-            dir="rtl"
-          />
-          <Button type="submit" disabled={loading}>
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Search className="w-4 h-4" />
-            )}
-          </Button>
+      <div className="w-full mb-8">
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+          <div className="flex gap-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="جستجوی لوازم جانبی کامپیوتر و موبایل..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-3 text-lg"
+                disabled={loading}
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={loading || !searchQuery.trim()}
+              className="px-6 py-3"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "جستجو"}
+            </Button>
+          </div>
         </form>
+
+        {/* Search suggestions */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600 mb-2">پیشنهادات جستجو:</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {[
+              "کیف لپ تاپ",
+              "ماوس گیمینگ",
+              "کیبورد مکانیکال",
+              "هارد اکسترنال",
+              "شارژر موبایل",
+              "کیف موبایل",
+              "پاوربانک",
+              "کابل USB",
+            ].map((suggestion) => (
+              <button
+                key={suggestion}
+                onClick={() => {
+                  setSearchQuery(suggestion);
+                  handleSearch(suggestion);
+                }}
+                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
+                disabled={loading}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
 
   const renderSearchResults = () => {
-    if (!currentSearch || loading) return null;
+    if (!currentSearch) return null;
 
     return (
-      <div className="mb-8">
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 shadow-sm border border-green-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                نتایج جستجو برای:
-              </h2>
-            </div>
-            <div className="flex items-center">
-              <span className="text-lg font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500">
-                {currentSearch}
-              </span>
-            </div>
-          </div>
-          <div className="mt-4 h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 rounded-full"></div>
-        </div>
+      <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm text-blue-800">
+          جستجو برای: <span className="font-semibold">{currentSearch}</span>
+        </p>
       </div>
     );
   };
@@ -212,18 +231,18 @@ export default function SearchProductsLayout({
     if (!error) return null;
 
     return (
-      <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-        {error}
+      <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <p className="text-red-800 text-center">{error}</p>
       </div>
     );
   };
 
   const renderMessage = () => {
-    if (!message || error) return null;
+    if (!message) return null;
 
     return (
-      <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700">
-        {message}
+      <div className="w-full bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <p className="text-green-800 text-center">{message}</p>
       </div>
     );
   };
@@ -252,7 +271,7 @@ export default function SearchProductsLayout({
           {/* Loading text with typewriter effect */}
           <div className="mt-4 text-center">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">
-              جستجوی بهترین محصولات...
+              جستجوی بهترین لوازم جانبی...
             </h3>
             <div className="flex justify-center items-center space-x-1 rtl:space-x-reverse">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce"></div>
@@ -266,7 +285,7 @@ export default function SearchProductsLayout({
               ></div>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              از گوگل شاپینگ در حال پیدا کردن محصولات...
+              از فروشگاه‌های معتبر ترکیه در حال پیدا کردن لوازم جانبی...
             </p>
           </div>
         </div>
@@ -280,7 +299,7 @@ export default function SearchProductsLayout({
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">
-          هیچ محصولی برای &quot;{currentSearch}&quot; یافت نشد.
+          هیچ لوازم جانبی برای &quot;{currentSearch}&quot; یافت نشد.
         </p>
         <p className="text-gray-400 text-sm mt-2">
           لطفاً کلمات کلیدی دیگری امتحان کنید.
@@ -288,11 +307,11 @@ export default function SearchProductsLayout({
         <div className="mt-4 text-sm text-gray-400">
           <p>پیشنهادات جستجو:</p>
           <ul className="mt-2 space-y-1">
-            <li>• لباس زنانه</li>
-            <li>• کفش ورزشی</li>
-            <li>• لوازم آرایشی</li>
-            <li>• ساعت مچی</li>
-            <li>• کیف دستی</li>
+            <li>• کیف لپ تاپ</li>
+            <li>• ماوس گیمینگ</li>
+            <li>• کیبورد مکانیکال</li>
+            <li>• هارد اکسترنال</li>
+            <li>• شارژر موبایل</li>
           </ul>
         </div>
       </div>
