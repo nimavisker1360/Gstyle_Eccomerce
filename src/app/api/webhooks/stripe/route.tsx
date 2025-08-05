@@ -1,45 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 
-import { sendPurchaseReceipt } from '@/emails'
-import Order from '@/lib/db/models/order.model'
+import { sendPurchaseReceipt } from "@/emails";
+import Order from "@/lib/db/models/order.model";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 
 export async function POST(req: NextRequest) {
+  // Check if Stripe is properly configured
+  if (!stripe) {
+    console.warn("Stripe not configured, webhook handler disabled");
+    return new NextResponse("Stripe not configured", { status: 503 });
+  }
+
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    console.warn("Stripe webhook secret not configured");
+    return new NextResponse("Webhook secret not configured", { status: 503 });
+  }
+
   const event = await stripe.webhooks.constructEvent(
     await req.text(),
-    req.headers.get('stripe-signature') as string,
-    process.env.STRIPE_WEBHOOK_SECRET as string
-  )
+    req.headers.get("stripe-signature") as string,
+    process.env.STRIPE_WEBHOOK_SECRET
+  );
 
-  if (event.type === 'charge.succeeded') {
-    const charge = event.data.object
-    const orderId = charge.metadata.orderId
-    const email = charge.billing_details.email
-    const pricePaidInCents = charge.amount
-    const order = await Order.findById(orderId).populate('user', 'email')
+  if (event.type === "charge.succeeded") {
+    const charge = event.data.object;
+    const orderId = charge.metadata.orderId;
+    const email = charge.billing_details.email;
+    const pricePaidInCents = charge.amount;
+    const order = await Order.findById(orderId).populate("user", "email");
     if (order == null) {
-      return new NextResponse('Bad Request', { status: 400 })
+      return new NextResponse("Bad Request", { status: 400 });
     }
 
-    order.isPaid = true
-    order.paidAt = new Date()
+    order.isPaid = true;
+    order.paidAt = new Date();
     order.paymentResult = {
       id: event.id,
-      status: 'COMPLETED',
+      status: "COMPLETED",
       email_address: email!,
       pricePaid: (pricePaidInCents / 100).toFixed(2),
-    }
-    await order.save()
+    };
+    await order.save();
     try {
-      await sendPurchaseReceipt({ order })
+      await sendPurchaseReceipt({ order });
     } catch (err) {
-      console.log('email error', err)
+      console.log("email error", err);
     }
     return NextResponse.json({
-      message: 'updateOrderToPaid was successful',
-    })
+      message: "updateOrderToPaid was successful",
+    });
   }
-  return new NextResponse()
+  return new NextResponse();
 }

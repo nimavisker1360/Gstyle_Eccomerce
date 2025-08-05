@@ -15,9 +15,12 @@ class FastProductCacheService {
 
   private constructor() {
     // پاکسازی خودکار کش هر 2 دقیقه
-    setInterval(() => {
-      this.cleanup();
-    }, 2 * 60 * 1000);
+    setInterval(
+      () => {
+        this.cleanup();
+      },
+      2 * 60 * 1000
+    );
   }
 
   public static getInstance(): FastProductCacheService {
@@ -34,7 +37,7 @@ class FastProductCacheService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -66,11 +69,11 @@ class FastProductCacheService {
    */
   private cleanup(): void {
     const now = Date.now();
-    for (const [key, item] of this.cache.entries()) {
+    this.cache.forEach((item, key) => {
       if (now - item.timestamp > item.ttl) {
         this.cache.delete(key);
       }
-    }
+    });
   }
 
   /**
@@ -86,7 +89,7 @@ class FastProductCacheService {
   getStats(): { size: number; keys: string[] } {
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      keys: Array.from(this.cache.keys()),
     };
   }
 

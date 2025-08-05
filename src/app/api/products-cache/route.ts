@@ -5,13 +5,13 @@ import { fastProductCache } from "@/lib/services/fast-product-cache.service";
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // پارامترهای درخواست
     const type = searchParams.get("type") || "featured"; // featured, latest, discounted, popular
-    const category = searchParams.get("category");
+    const category = searchParams.get("category") || undefined;
     const limit = parseInt(searchParams.get("limit") || "20");
     const page = parseInt(searchParams.get("page") || "1");
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       category,
       tag: type,
       page,
-      limit
+      limit,
     });
 
     // بررسی کش
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         ...cachedResult,
         cached: true,
-        responseTime: `${Date.now() - startTime}ms`
+        responseTime: `${Date.now() - startTime}ms`,
       });
     }
 
@@ -51,12 +51,12 @@ export async function GET(request: NextRequest) {
       avgRating: 1,
       numReviews: 1,
       numSales: 1,
-      createdAt: 1
+      createdAt: 1,
     };
 
     const skip = (page - 1) * limit;
     let conditions: any = { isPublished: true };
-    
+
     if (category && category !== "all") {
       conditions.category = category;
     }
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
         break;
 
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
         break;
 
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
         break;
 
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
         break;
 
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
         break;
 
@@ -145,18 +145,23 @@ export async function GET(request: NextRequest) {
             .limit(limit)
             .lean()
             .exec(),
-          Product.countDocuments(conditions).exec()
+          Product.countDocuments(conditions).exec(),
         ]);
     }
 
     // پردازش داده‌ها
-    const processedProducts = products.map(product => ({
+    const processedProducts = products.map((product) => ({
       ...product,
       image: product.images?.[0] || "",
-      discount: product.listPrice > product.price 
-        ? Math.round(((product.listPrice - product.price) / product.listPrice) * 100) 
-        : 0,
-      isNew: new Date(product.createdAt).getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000), // آیا 7 روز گذشته اضافه شده
+      discount:
+        product.listPrice > product.price
+          ? Math.round(
+              ((product.listPrice - product.price) / product.listPrice) * 100
+            )
+          : 0,
+      isNew:
+        new Date(product.createdAt).getTime() >
+        Date.now() - 7 * 24 * 60 * 60 * 1000, // آیا 7 روز گذشته اضافه شده
     }));
 
     const result = {
@@ -167,10 +172,10 @@ export async function GET(request: NextRequest) {
         limit,
         totalPages: Math.ceil(total / limit),
         hasNext: page < Math.ceil(total / limit),
-        hasPrev: page > 1
+        hasPrev: page > 1,
       },
       type,
-      category: category || "all"
+      category: category || "all",
     };
 
     // ذخیره در کش (3 دقیقه TTL)
@@ -182,16 +187,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       ...result,
       cached: false,
-      responseTime: `${responseTime}ms`
+      responseTime: `${responseTime}ms`,
     });
-
   } catch (error) {
     console.error("❌ Products cache API error:", error);
     return NextResponse.json(
-      { 
-        error: "خطا در دریافت محصولات", 
+      {
+        error: "خطا در دریافت محصولات",
         products: [],
-        pagination: { total: 0, page: 1, limit: 20, totalPages: 0, hasNext: false, hasPrev: false }
+        pagination: {
+          total: 0,
+          page: 1,
+          limit: 20,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
       },
       { status: 500 }
     );
@@ -223,10 +234,13 @@ export async function POST(request: NextRequest) {
     const stats = fastProductCache.getStats();
     return NextResponse.json({
       ...stats,
-      message: "Cache statistics retrieved successfully"
+      message: "Cache statistics retrieved successfully",
     });
   } catch (error) {
     console.error("❌ Cache stats error:", error);
-    return NextResponse.json({ error: "خطا در دریافت آمار کش" }, { status: 500 });
+    return NextResponse.json(
+      { error: "خطا در دریافت آمار کش" },
+      { status: 500 }
+    );
   }
 }
