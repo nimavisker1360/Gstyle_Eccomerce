@@ -253,9 +253,11 @@ async function translateTurkishToPersian(
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { searchParams }: { searchParams: URLSearchParams }
+) {
   try {
-    const { searchParams } = new URL(request.url);
     const query = searchParams.get("q");
 
     if (!query) {
