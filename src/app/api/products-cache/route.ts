@@ -40,12 +40,12 @@ export async function GET(request: NextRequest) {
     let total = 0;
 
     // انتخاب فیلدهای ضروری
-    const projection = {
+    const selectFields = {
       name: 1,
       slug: 1,
       price: 1,
       listPrice: 1,
-      images: { $slice: 1 },
+      images: 1,
       brand: 1,
       category: 1,
       avgRating: 1,
@@ -65,7 +65,8 @@ export async function GET(request: NextRequest) {
       case "featured":
         // محصولات ویژه (بالاترین امتیاز)
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ avgRating: -1, numReviews: -1 })
             .skip(skip)
             .limit(limit)
@@ -78,7 +79,8 @@ export async function GET(request: NextRequest) {
       case "latest":
         // جدیدترین محصولات
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -92,7 +94,8 @@ export async function GET(request: NextRequest) {
         // محصولات تخفیف‌دار
         conditions.$expr = { $lt: ["$price", "$listPrice"] };
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -105,7 +108,8 @@ export async function GET(request: NextRequest) {
       case "popular":
         // محصولات پرفروش
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ numSales: -1, avgRating: -1 })
             .skip(skip)
             .limit(limit)
@@ -120,7 +124,8 @@ export async function GET(request: NextRequest) {
         conditions.avgRating = { $gte: 4 };
         conditions.numReviews = { $gte: 10 };
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ avgRating: -1, numReviews: -1 })
             .skip(skip)
             .limit(limit)
@@ -133,7 +138,8 @@ export async function GET(request: NextRequest) {
       default:
         // پیش‌فرض: جدیدترین محصولات
         [products, total] = await Promise.all([
-          Product.find(conditions, projection)
+          Product.find(conditions)
+            .select(selectFields)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)

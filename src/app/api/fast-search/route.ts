@@ -88,23 +88,21 @@ export async function GET(request: NextRequest) {
     // محاسبه skip
     const skip = (page - 1) * limit;
 
-    // انتخاب فیلدهای ضروری برای سرعت بیشتر
-    const projection = {
-      name: 1,
-      slug: 1,
-      price: 1,
-      listPrice: 1,
-      images: { $slice: 1 }, // فقط اولین تصویر
-      brand: 1,
-      category: 1,
-      avgRating: 1,
-      numReviews: 1,
-      numSales: 1,
-    };
-
     // اجرای موازی برای سرعت بیشتر
     const [products, total] = await Promise.all([
-      Product.find(conditions, projection)
+      Product.find(conditions)
+        .select({
+          name: 1,
+          slug: 1,
+          price: 1,
+          listPrice: 1,
+          images: 1,
+          brand: 1,
+          category: 1,
+          avgRating: 1,
+          numReviews: 1,
+          numSales: 1,
+        })
         .sort(sortOption)
         .skip(skip)
         .limit(limit)
