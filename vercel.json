@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/cache-maintenance",
+      "schedule": "0 */6 * * *"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "mongodb://localhost:27017/gstyle-ecommerce",
+    "SERPAPI_KEY": "your-serpapi-key-here",
+    "CRON_SECRET": "your-secret-key-here"
+  }
+}

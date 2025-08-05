@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getJson } from "serpapi";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { serpAPIService } from "@/lib/services/serpapi.service";
 
 // Function to extract and validate product links from SERP API
 function extractProductLink(product: any): string | null {
@@ -432,32 +433,51 @@ export async function GET(request: NextRequest) {
     console.log(`🔍 Original query: "${query}"`);
     console.log(`🔍 Enhanced query: "${enhancedQuery}"`);
 
-    const serpApiParams = {
-      engine: "google_shopping",
-      q: enhancedQuery,
-      gl: "tr", // ترکیه
-      hl: "tr", // زبان ترکی
-      num: resultCount, // تعداد نتایج بر اساس نوع کوئری
-      device: "desktop", // اجباری برای دسکتاپ
-      api_key: process.env.SERPAPI_KEY,
-    };
+    // استفاده از سرویس کش برای جستجو
+    const forceRefresh = searchParams.get("refresh") === "true";
 
-    console.log("🔍 Search parameters:", serpApiParams);
+    console.log(`🔍 Searching with enhanced query: "${enhancedQuery}"`);
 
-    const shoppingResults = await getJson(serpApiParams);
+    let shoppingResults = await serpAPIService.searchProducts(
+      enhancedQuery,
+      "search",
+      resultCount,
+      forceRefresh
+    );
+
+    // اگر نتایج خالی است، مستقیماً از SerpAPI استفاده کن
+    if (!shoppingResults || shoppingResults.length === 0) {
+      console.log("🔄 No cached results, fetching from SerpAPI directly...");
+
+      const serpApiParams = {
+        engine: "google_shopping",
+        q: enhancedQuery,
+        gl: "tr",
+        hl: "tr",
+        num: resultCount,
+        device: "desktop",
+        api_key: process.env.SERPAPI_KEY,
+      };
+
+      try {
+        const response = await getJson(serpApiParams);
+        if (response && response.shopping_results) {
+          shoppingResults = response.shopping_results;
+        }
+      } catch (error) {
+        console.error("❌ SerpAPI error:", error);
+        shoppingResults = [];
+      }
+    }
 
     console.log("🔍 Raw search results:", {
-      hasResults: !!shoppingResults.shopping_results,
-      resultCount: shoppingResults.shopping_results?.length || 0,
-      searchInfo: shoppingResults.search_information,
+      hasResults: !!shoppingResults,
+      resultCount: shoppingResults?.length || 0,
     });
 
     // Debug: log کردن ساختار داده برای بهبود
-    if (
-      shoppingResults.shopping_results &&
-      shoppingResults.shopping_results.length > 0
-    ) {
-      const sampleProduct = shoppingResults.shopping_results[0];
+    if (shoppingResults && shoppingResults.length > 0) {
+      const sampleProduct = shoppingResults[0];
       console.log("📋 Sample product structure:");
       console.log("- product.link:", sampleProduct.link);
       console.log("- product.source_link:", sampleProduct.source_link);
@@ -467,10 +487,7 @@ export async function GET(request: NextRequest) {
       console.log("- product.price:", sampleProduct.price);
     }
 
-    if (
-      !shoppingResults.shopping_results ||
-      shoppingResults.shopping_results.length === 0
-    ) {
+    if (!shoppingResults || shoppingResults.length === 0) {
       console.log("❌ No search results found");
       return NextResponse.json({
         products: [],
@@ -481,12 +498,10 @@ export async function GET(request: NextRequest) {
     }
 
     // نمایش همه محصولات (بدون فیلتر اولیه)
-    console.log(
-      `🔍 Total products from SerpAPI: ${shoppingResults.shopping_results.length}`
-    );
+    console.log(`🔍 Total products from SerpAPI: ${shoppingResults.length}`);
 
     // اگر برای کوئری مد و پوشاک نتایج کم است، سعی کن با چندین جستجوی موازی
-    let limitedResults = shoppingResults.shopping_results.slice(0, resultCount);
+    let limitedResults = shoppingResults.slice(0, resultCount);
 
     if (isFashionQuery && limitedResults.length < 30) {
       console.log(
@@ -512,31 +527,27 @@ export async function GET(request: NextRequest) {
         additionalQueries.push("giyim", "moda", "clothing", "fashion");
       }
 
-      // انجام جستجوهای اضافی
+      // انجام جستجوهای اضافی با کش
       for (const additionalQuery of additionalQueries) {
         try {
-          const additionalParams = {
-            ...serpApiParams,
-            q: additionalQuery,
-            num: 40,
-          };
-
           console.log(`🔄 Additional search with: "${additionalQuery}"`);
-          const additionalResults = await getJson(additionalParams);
+          const additionalResults = await serpAPIService.searchProducts(
+            additionalQuery,
+            "search",
+            40,
+            false
+          );
 
-          if (
-            additionalResults.shopping_results &&
-            additionalResults.shopping_results.length > 0
-          ) {
+          if (additionalResults && additionalResults.length > 0) {
             console.log(
-              `✅ Additional search found ${additionalResults.shopping_results.length} results`
+              `✅ Additional search found ${additionalResults.length} results`
             );
 
             // ترکیب نتایج و حذف تکراری‌ها
             const existingIds = new Set(
               limitedResults.map((p: any) => p.product_id || p.title)
             );
-            const newResults = additionalResults.shopping_results.filter(
+            const newResults = additionalResults.filter(
               (p: any) => !existingIds.has(p.product_id || p.title)
             );
 
@@ -892,7 +903,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       products: enhancedProducts,
-      total: shoppingResults.search_information?.total_results || 0,
+      total: enhancedProducts.length,
       search_query: query,
       enhanced_query: enhancedQuery,
       query_type: queryType,
