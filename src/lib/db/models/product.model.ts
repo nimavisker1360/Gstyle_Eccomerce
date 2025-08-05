@@ -91,6 +91,36 @@ const productSchema = new Schema<IProduct>(
   }
 );
 
+// اضافه کردن Index‌های بهینه برای جستجوی سریع
+productSchema.index({ category: 1 }); // جستجو بر اساس دسته‌بندی
+productSchema.index({ brand: 1 }); // جستجو بر اساس برند
+productSchema.index({ price: 1 }); // مرتب‌سازی بر اساس قیمت
+productSchema.index({ avgRating: -1 }); // مرتب‌سازی بر اساس امتیاز
+productSchema.index({ numSales: -1 }); // مرتب‌سازی بر اساس فروش
+productSchema.index({ createdAt: -1 }); // مرتب‌سازی بر اساس تاریخ
+productSchema.index({ isPublished: 1 }); // فیلتر محصولات منتشر شده
+
+// Index‌های ترکیبی برای کوئری‌های پیچیده
+productSchema.index({ category: 1, isPublished: 1 }); 
+productSchema.index({ category: 1, price: 1 }); 
+productSchema.index({ brand: 1, category: 1 }); 
+productSchema.index({ isPublished: 1, avgRating: -1 }); 
+
+// Text index برای جستجوی متنی سریع
+productSchema.index({ 
+  name: 'text', 
+  description: 'text', 
+  brand: 'text',
+  category: 'text' 
+}, {
+  weights: {
+    name: 10,
+    brand: 5,
+    category: 3,
+    description: 1
+  }
+});
+
 const Product =
   (models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);

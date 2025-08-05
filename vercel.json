@@ -6,6 +6,40 @@
       "use": "@vercel/next"
     }
   ],
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/fast-search/route.ts": {
+      "maxDuration": 10
+    },
+    "src/app/api/products-cache/route.ts": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=120" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    },
+    {
+      "source": "/api/fast-search",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=120, s-maxage=300" }
+      ]
+    },
+    {
+      "source": "/api/products-cache",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=180, s-maxage=600" }
+      ]
+    }
+  ],
   "crons": [
     {
       "path": "/api/cron/cache-maintenance",
