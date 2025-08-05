@@ -15,7 +15,6 @@ export const connectToDatabase = async (
     serverSelectionTimeoutMS: 5000, // 5 ثانیه انتظار برای سرور
     socketTimeoutMS: 45000, // 45 ثانیه timeout برای socket
     bufferCommands: false, // غیرفعال کردن buffer commands
-    bufferMaxEntries: 0, // بدون buffer
     maxIdleTimeMS: 30000, // بستن اتصالات idle
     connectTimeoutMS: 10000, // 10 ثانیه timeout برای اتصال
   }

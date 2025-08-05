@@ -2,6 +2,7 @@ import { HomeBanner } from "@/components/shared/home/home-banner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ShoppingProductsGrid from "@/components/shared/product/shopping-products-grid";
 import LatestDiscountsSlider from "@/components/shared/product/latest-discounts-slider";
+import HomepageProductsSlider from "@/components/shared/product/homepage-products-slider";
 import CategoriesGrid from "@/components/shared/product/categories-grid";
 import WeeklyTrends from "@/components/shared/product/weekly-trends";
 import BrandsShowcase from "@/components/shared/product/brands-showcase";
@@ -13,6 +14,11 @@ export default async function HomePage() {
     <>
       <div className="pt-8">
         <HomeBanner />
+      </div>
+
+      {/* Homepage Products from Database */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+        <HomepageProductsSlider title="محصولات ویژه" />
       </div>
 
       {/* Latest Discounts Section - Now fetches from Google Shopping */}

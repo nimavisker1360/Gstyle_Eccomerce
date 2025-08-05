@@ -123,6 +123,6 @@ productSchema.index({
 
 const Product =
   (models.Product as Model<IProduct>) ||
-  model<IProduct>("Product", productSchema);
+  model<IProduct>("Product", productSchema, "homepageproducts");
 
 export default Product;
