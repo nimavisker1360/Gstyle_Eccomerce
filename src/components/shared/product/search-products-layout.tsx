@@ -30,6 +30,8 @@ interface SearchProductsLayoutProps {
   initialQuery?: string;
   hideSearchBar?: boolean;
   allowEmpty?: boolean;
+  brandFilter?: string;
+  typeFilter?: string;
 }
 
 export default function SearchProductsLayout({
@@ -37,6 +39,8 @@ export default function SearchProductsLayout({
   initialQuery,
   hideSearchBar = false,
   allowEmpty = false,
+  brandFilter,
+  typeFilter,
 }: SearchProductsLayoutProps) {
   const [products, setProducts] = useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = useState(false);
@@ -253,40 +257,65 @@ export default function SearchProductsLayout({
     try {
       console.log(`🔍 Searching for: "${query}"`);
 
-      const response = await fetch(
-        `/api/shopping?q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
+      // Check if this is a Turkish brand search
+      if (brandFilter && typeFilter === "turkish") {
+        console.log(`🇹🇷 Turkish brand search for: ${brandFilter}`);
 
-      console.log(`📊 Search response:`, {
-        status: response.status,
-        productsCount: data.products?.length || 0,
-        message: data.message,
-        error: data.error,
-      });
-
-      if (!response.ok) {
-        throw new Error(data.error || "خطا در دریافت اطلاعات");
-      }
-
-      setProducts(data.products || []);
-      setMessage(data.message || "");
-
-      // Log search results for debugging
-      if (data.products && data.products.length > 0) {
-        const isQueryFashion = isFashionQuery(query);
-        console.log(`✅ Found ${data.products.length} products`);
-        console.log(`🎯 Fashion query: ${isQueryFashion ? "Yes" : "No"}`);
-        console.log(
-          `📊 Will display: ${isQueryFashion ? data.products.length : Math.min(50, data.products.length)} products`
+        const response = await fetch(
+          `/api/shopping/turkish-brands?brand=${encodeURIComponent(brandFilter)}&type=turkish`
         );
-        data.products.forEach((product: ShoppingProduct, index: number) => {
-          console.log(
-            `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
-          );
+        const data = await response.json();
+
+        console.log(`📊 Turkish brand search response:`, {
+          status: response.status,
+          productsCount: data.products?.length || 0,
+          message: data.message,
+          error: data.error,
         });
+
+        if (!response.ok) {
+          throw new Error(data.error || "خطا در دریافت محصولات برند ترکیه");
+        }
+
+        setProducts(data.products || []);
+        setMessage(data.message || `محصولات برند ${brandFilter}`);
       } else {
-        console.log(`❌ No products found for query: "${query}"`);
+        // Regular search
+        const response = await fetch(
+          `/api/shopping?q=${encodeURIComponent(query)}`
+        );
+        const data = await response.json();
+
+        console.log(`📊 Search response:`, {
+          status: response.status,
+          productsCount: data.products?.length || 0,
+          message: data.message,
+          error: data.error,
+        });
+
+        if (!response.ok) {
+          throw new Error(data.error || "خطا در دریافت اطلاعات");
+        }
+
+        setProducts(data.products || []);
+        setMessage(data.message || "");
+
+        // Log search results for debugging
+        if (data.products && data.products.length > 0) {
+          const isQueryFashion = isFashionQuery(query);
+          console.log(`✅ Found ${data.products.length} products`);
+          console.log(`🎯 Fashion query: ${isQueryFashion ? "Yes" : "No"}`);
+          console.log(
+            `📊 Will display: ${isQueryFashion ? data.products.length : Math.min(50, data.products.length)} products`
+          );
+          data.products.forEach((product: ShoppingProduct, index: number) => {
+            console.log(
+              `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
+            );
+          });
+        } else {
+          console.log(`❌ No products found for query: "${query}"`);
+        }
       }
     } catch (err) {
       console.error("❌ Search error:", err);
@@ -309,7 +338,7 @@ export default function SearchProductsLayout({
       console.log(`🚀 Initial search for: "${initialQuery}"`);
       handleSearch(initialQuery);
     }
-  }, [initialQuery, handleSearch]);
+  }, [initialQuery, handleSearch, brandFilter, typeFilter]);
 
   // اگر هیچ query اولیه‌ای وجود نداشته باشد و allowEmpty false باشد، هیچ محصولی نمایش نده
   if ((!initialQuery || !initialQuery.trim()) && !allowEmpty) {

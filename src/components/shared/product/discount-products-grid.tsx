@@ -21,7 +21,15 @@ interface ShoppingProduct {
   delivery: string;
 }
 
-export default function DiscountProductsGrid() {
+interface DiscountProductsGridProps {
+  telegramSupport?: string;
+  searchQuery?: string;
+}
+
+export default function DiscountProductsGrid({
+  telegramSupport = "@gstyle_support",
+  searchQuery,
+}: DiscountProductsGridProps) {
   const [products, setProducts] = React.useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);

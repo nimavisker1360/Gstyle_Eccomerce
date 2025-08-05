@@ -14,15 +14,21 @@ interface SearchPageProps {
     discount?: string;
     view?: string;
     category?: string;
+    brand?: string;
+    type?: string;
   };
 }
 
 function SearchResultsContent({
   query,
   view,
+  brand,
+  type,
 }: {
   query: string;
   view?: string;
+  brand?: string;
+  type?: string;
 }) {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
@@ -57,6 +63,8 @@ function SearchResultsContent({
             telegramSupport={telegramSupport}
             initialQuery={query}
             hideSearchBar={true}
+            brandFilter={brand}
+            typeFilter={type}
           />
         </div>
       </div>
@@ -88,6 +96,8 @@ function SearchResultsContent({
           telegramSupport={telegramSupport}
           initialQuery={query}
           hideSearchBar={true}
+          brandFilter={brand}
+          typeFilter={type}
         />
       </div>
     </div>
@@ -98,33 +108,42 @@ function DiscountProductsContent({ searchQuery }: { searchQuery?: string }) {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
   return (
-    <div className="max-w-7xl mx-auto px-6">
-      {/* Discounts Section - Always visible and fixed */}
-      <div className="mb-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 text-right mb-2">
-            آخرین تخفیف‌ها
-          </h1>
-          <p className="text-gray-600 text-right">
-            تمامی محصولات با تخفیف ویژه از گوگل شاپینگ
-          </p>
-        </div>
-
-        {/* Use the separate client component for full page grid */}
-        <DiscountProductsGrid />
+    <div className="flex flex-col lg:flex-row">
+      {/* Sidebar - Hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block">
+        <SearchSidebar
+          currentQuery={searchQuery}
+          totalProducts={0}
+          onFilterChange={() => {}}
+        />
       </div>
 
-      {/* Product Search Section - Below discounts */}
-      <div className="mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-2">
-              جستجوی محصولات
-            </h2>
-            <p className="text-gray-600 text-right">
-              جستجو و کاوش هزاران محصول از فروشگاه‌های معتبر ترکیه
-            </p>
+      {/* Main Content */}
+      <div className="flex-1 px-4">
+        {/* Mobile Filter Button */}
+        <MobileFilterButton
+          currentQuery={searchQuery}
+          totalProducts={0}
+          onFilterChange={() => {}}
+        />
+
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 shadow-lg border border-green-400">
+            <div className="text-white text-center">
+              <h2 className="text-2xl font-bold mb-2">محصولات تخفیف دار</h2>
+              <p className="text-green-100">
+                بهترین پیشنهادات و تخفیف‌های ویژه برای شما
+              </p>
+            </div>
           </div>
+        </div>
+
+        <DiscountProductsGrid
+          telegramSupport={telegramSupport}
+          searchQuery={searchQuery}
+        />
+
+        <div className="mt-8">
           <SearchProductsLayout
             telegramSupport={telegramSupport}
             allowEmpty={true}
@@ -192,6 +211,8 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
   const query = searchParams.q || searchParams.category;
   const showDiscounts = searchParams.discount === "true";
   const view = searchParams.view;
+  const brand = searchParams.brand;
+  const type = searchParams.type;
 
   // Show discount products if discount parameter is true (even if query exists)
   if (showDiscounts) {
@@ -207,8 +228,8 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
     );
   }
 
-  // Show regular search results if query exists
-  if (!query) {
+  // Show regular search results if query exists or if Turkish brand is selected
+  if (!query && !brand) {
     return null;
   }
 
@@ -217,7 +238,12 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       <HomeBanner />
       <div className="py-8">
         <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResultsContent query={query} view={view} />
+          <SearchResultsContent
+            query={query || brand || ""}
+            view={view}
+            brand={brand}
+            type={type}
+          />
         </Suspense>
       </div>
     </>

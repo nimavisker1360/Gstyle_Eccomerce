@@ -29,12 +29,16 @@ interface AllProductsViewProps {
   telegramSupport?: string;
   initialQuery?: string;
   hideSearchBar?: boolean;
+  brandFilter?: string;
+  typeFilter?: string;
 }
 
 export default function AllProductsView({
   telegramSupport,
   initialQuery,
   hideSearchBar = false,
+  brandFilter,
+  typeFilter,
 }: AllProductsViewProps) {
   const [products, setProducts] = useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = useState(false);
@@ -188,56 +192,84 @@ export default function AllProductsView({
     return query.length > 20 ? query.substring(0, 20) + "..." : query;
   };
 
-  const handleSearch = useCallback(async (query: string) => {
-    if (!query.trim()) return;
+  const handleSearch = useCallback(
+    async (query: string) => {
+      if (!query.trim()) return;
 
-    setLoading(true);
-    setError("");
-    setMessage("");
-    setCurrentSearch(query);
-
-    try {
-      console.log(`🔍 Searching for: "${query}"`);
-
-      const response = await fetch(
-        `/api/shopping?q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-
-      console.log(`📊 Search response:`, {
-        status: response.status,
-        productsCount: data.products?.length || 0,
-        message: data.message,
-        error: data.error,
-      });
-
-      if (!response.ok) {
-        throw new Error(data.error || "خطا در دریافت اطلاعات");
-      }
-
-      setProducts(data.products || []);
-      setMessage(data.message || "");
-
-      // Log search results for debugging
-      if (data.products && data.products.length > 0) {
-        console.log(`✅ Found ${data.products.length} products`);
-        data.products.forEach((product: ShoppingProduct, index: number) => {
-          console.log(
-            `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
-          );
-        });
-      } else {
-        console.log(`❌ No products found for query: "${query}"`);
-      }
-    } catch (err) {
-      console.error("❌ Search error:", err);
-      setError("خطا در دریافت محصولات. لطفاً دوباره تلاش کنید.");
-      setProducts([]);
+      setLoading(true);
+      setError("");
       setMessage("");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      setCurrentSearch(query);
+
+      try {
+        console.log(`🔍 Searching for: "${query}"`);
+
+        // Check if this is a Turkish brand search
+        if (brandFilter && typeFilter === "turkish") {
+          console.log(`🇹🇷 Turkish brand search for: ${brandFilter}`);
+
+          const response = await fetch(
+            `/api/shopping/turkish-brands?brand=${encodeURIComponent(brandFilter)}&type=turkish`
+          );
+          const data = await response.json();
+
+          console.log(`📊 Turkish brand search response:`, {
+            status: response.status,
+            productsCount: data.products?.length || 0,
+            message: data.message,
+            error: data.error,
+          });
+
+          if (!response.ok) {
+            throw new Error(data.error || "خطا در دریافت محصولات برند ترکیه");
+          }
+
+          setProducts(data.products || []);
+          setMessage(data.message || `محصولات برند ${brandFilter}`);
+        } else {
+          // Regular search
+          const response = await fetch(
+            `/api/shopping?q=${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
+
+          console.log(`📊 Search response:`, {
+            status: response.status,
+            productsCount: data.products?.length || 0,
+            message: data.message,
+            error: data.error,
+          });
+
+          if (!response.ok) {
+            throw new Error(data.error || "خطا در دریافت اطلاعات");
+          }
+
+          setProducts(data.products || []);
+          setMessage(data.message || "");
+
+          // Log search results for debugging
+          if (data.products && data.products.length > 0) {
+            console.log(`✅ Found ${data.products.length} products`);
+            data.products.forEach((product: ShoppingProduct, index: number) => {
+              console.log(
+                `📦 Product ${index + 1}: ${product.title} - ${product.price} ${product.currency}`
+              );
+            });
+          } else {
+            console.log(`❌ No products found for query: "${query}"`);
+          }
+        }
+      } catch (err) {
+        console.error("❌ Search error:", err);
+        setError("خطا در دریافت محصولات. لطفاً دوباره تلاش کنید.");
+        setProducts([]);
+        setMessage("");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [brandFilter, typeFilter]
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -250,7 +282,7 @@ export default function AllProductsView({
       console.log(`🚀 Initial search for: "${initialQuery}"`);
       handleSearch(initialQuery);
     }
-  }, [initialQuery, handleSearch]);
+  }, [initialQuery, handleSearch, brandFilter, typeFilter]);
 
   const renderSearchBar = () => {
     if (hideSearchBar) return null;
