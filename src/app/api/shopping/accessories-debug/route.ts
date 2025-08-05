@@ -46,10 +46,93 @@ export async function GET(request: NextRequest) {
       error: shoppingResults.error,
     });
 
-    // Return all results without any processing
+    // Process products to match the main API structure
+    const processedProducts = (shoppingResults.shopping_results || []).map(
+      (product: any) => {
+        // Clean and validate text first
+        let title = product.title || "";
+        let description = product.description || "";
+
+        // Clean text to remove JSON-like structures
+        if (title) {
+          title = title
+            .replace(
+              /\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*,[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g,
+              ""
+            )
+            .replace(/\{[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+            .replace(/\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+            .replace(/"title"[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/"description"[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/title[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/description[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/["'""]/g, "")
+            .trim();
+        }
+
+        if (description) {
+          description = description
+            .replace(
+              /\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*,[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g,
+              ""
+            )
+            .replace(/\{[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+            .replace(/\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+            .replace(/"title"[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/"description"[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/title[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/description[\s]*:[\s]*"[^"]*"/g, "")
+            .replace(/["'""]/g, "")
+            .trim();
+        }
+
+        // If description still contains JSON-like content, use title
+        if (
+          description &&
+          (description.includes('"title"') ||
+            description.includes('"description"') ||
+            description.includes("title:") ||
+            description.includes("description:"))
+        ) {
+          description = title || "توضیحات محصول";
+        }
+
+        // If description is empty, use title
+        if (!description && title) {
+          description = title;
+        }
+
+        return {
+          id: product.product_id || `product-${Date.now()}-${Math.random()}`,
+          title: title,
+          originalTitle: product.title || "",
+          price:
+            parseFloat(
+              product.price?.replace(/[^\d.,]/g, "").replace(",", ".")
+            ) || 0,
+          originalPrice: product.original_price
+            ? parseFloat(
+                product.original_price.replace(/[^\d.,]/g, "").replace(",", ".")
+              )
+            : null,
+          currency: product.price?.replace(/[\d.,]/g, "").trim() || "TL",
+          image: product.thumbnail || "",
+          description: description,
+          originalDescription: product.description || "",
+          link: product.product_link || product.link || null,
+          googleShoppingLink: product.link || "",
+          source: product.merchant?.name || "Unknown",
+          rating: parseFloat(product.rating) || 0,
+          reviews: parseInt(product.reviews) || 0,
+          delivery: product.delivery || "اطلاعات ارسال موجود نیست",
+        };
+      }
+    );
+
+    // Return processed results
     return NextResponse.json({
-      products: shoppingResults.shopping_results || [],
-      message: `تعداد نتایج خام: ${shoppingResults.shopping_results?.length || 0}`,
+      products: processedProducts,
+      message: `تعداد نتایج: ${processedProducts.length}`,
       search_query: query,
       raw_results: shoppingResults,
     });

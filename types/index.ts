@@ -16,6 +16,28 @@ import z from "zod";
 // Import IProduct from the product model
 export type { IProduct } from "@/lib/db/models/product.model";
 
+// Import product types from the new product types file
+export type {
+  Product,
+  BasicProductInfo,
+  AdditionalProductInfo,
+  ProductAPILinks,
+  StoreInfo,
+  SearchParams,
+  SearchResponse,
+  MongoDBProduct,
+  ProductCategory,
+  Currency,
+  RatingDistribution,
+  SearchEngine,
+  DeviceType,
+  SupportedCountry,
+  SupportedLanguage,
+  ProductStatus,
+  SupportedStoreDomain,
+  SUPPORTED_STORE_DOMAINS,
+} from "./product.types";
+
 export type IReviewInput = z.infer<typeof ReviewInputSchema>;
 export type IReviewClientInput = z.infer<typeof ReviewClientInputSchema>;
 export type OrderItem = z.infer<typeof OrderItemSchema>;

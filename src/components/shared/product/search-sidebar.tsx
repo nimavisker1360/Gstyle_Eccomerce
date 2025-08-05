@@ -125,29 +125,40 @@ export default function SearchSidebar({
 
   return (
     <div className="w-80 bg-white border-l border-gray-200 p-6 h-screen overflow-y-auto">
-      {/* Header with context info */}
+      {/* Header with context info and breadcrumb in a beautiful green card */}
       <div className="mb-6">
-        <div className="text-sm text-gray-500 mb-2">
-          {currentQuery && (
-            <div className="mb-2">
-              <p className="text-gray-600 text-right">
-                جستجو برای: {currentQuery}
-              </p>
-              <p className="text-gray-500 text-right">
-                {totalProducts} محصول یافت شد
-              </p>
-            </div>
-          )}
-        </div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 shadow-lg border border-green-400">
+          <div className="text-white">
+            {currentQuery && (
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-right mb-2">
+                  نتایج جستجو
+                </h3>
+                <p className="text-green-100 text-right text-sm">
+                  جستجو برای:{" "}
+                  <span className="font-semibold">
+                    {currentQuery?.replace(/\d+/g, "").trim()}
+                  </span>
+                </p>
+                {totalProducts > 0 && (
+                  <p className="text-green-100 text-right text-sm mt-1">
+                    تعداد محصولات:{" "}
+                    <span className="font-semibold">{totalProducts}</span>
+                  </p>
+                )}
+              </div>
+            )}
 
-        {/* Breadcrumb */}
-        <Link
-          href="/"
-          className="flex items-center text-sm text-gray-600 hover:text-gray-800 mb-4"
-        >
-          <ChevronLeft className="w-4 h-4 ml-1" />
-          <span>بازگشت به صفحه اصلی</span>
-        </Link>
+            {/* Breadcrumb */}
+            <Link
+              href="/"
+              className="flex items-center text-green-100 hover:text-white transition-colors duration-200 text-sm"
+            >
+              <ChevronLeft className="w-4 h-4 ml-2" />
+              <span>بازگشت به صفحه اصلی</span>
+            </Link>
+          </div>
+        </div>
       </div>
 
       <Separator className="mb-6" />

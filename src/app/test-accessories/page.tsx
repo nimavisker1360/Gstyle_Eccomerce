@@ -100,10 +100,19 @@ export default function TestAccessoriesPage() {
         {results && (
           <div className="space-y-4">
             <div className="bg-gray-100 p-4 rounded">
-              <h3 className="font-bold mb-2">نتایج جستجو:</h3>
-              <pre className="text-sm overflow-auto">
-                {JSON.stringify(results, null, 2)}
-              </pre>
+              <h3 className="font-bold mb-2">اطلاعات جستجو:</h3>
+              <div className="text-sm space-y-2">
+                <p>
+                  <strong>پیام:</strong> {results.message}
+                </p>
+                <p>
+                  <strong>کوئری:</strong> {results.search_query}
+                </p>
+                <p>
+                  <strong>تعداد محصولات:</strong>{" "}
+                  {results.products?.length || 0}
+                </p>
+              </div>
             </div>
 
             {results.products && results.products.length > 0 && (
@@ -115,13 +124,18 @@ export default function TestAccessoriesPage() {
                   {results.products.map((product: any, index: number) => (
                     <div key={index} className="border p-4 rounded">
                       <h4 className="font-bold">{product.title}</h4>
-                      <p className="text-sm text-gray-600">
-                        {product.originalTitle}
+                      <p className="text-sm text-gray-600 mb-2">
+                        {product.description}
                       </p>
                       <p className="text-green-600 font-bold">
                         {product.price} {product.currency}
                       </p>
                       <p className="text-xs text-gray-500">{product.source}</p>
+                      {product.rating > 0 && (
+                        <p className="text-xs text-gray-500">
+                          ⭐ {product.rating} ({product.reviews} نظر)
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>

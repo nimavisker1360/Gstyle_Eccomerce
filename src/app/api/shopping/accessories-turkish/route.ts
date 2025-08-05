@@ -221,32 +221,91 @@ export async function GET(request: NextRequest) {
       error: shoppingResults.error,
     });
 
-    // Process results without filtering
-    const processedProducts = (shoppingResults.shopping_results || []).map(
-      (product: any, index: number) => ({
-        id: product.product_id || `product-${Date.now()}-${index}`,
-        title: product.title || "",
-        originalTitle: product.title || "",
-        price:
-          parseFloat(
-            product.price?.replace(/[^\d.,]/g, "").replace(",", ".")
-          ) || 0,
-        originalPrice: product.original_price
-          ? parseFloat(
-              product.original_price.replace(/[^\d.,]/g, "").replace(",", ".")
-            )
-          : null,
-        currency: product.price?.replace(/[\d.,]/g, "").trim() || "TL",
-        image: product.thumbnail || "",
-        description: product.description || "",
-        originalDescription: product.description || "",
-        link: product.link || "",
-        googleShoppingLink: product.link || "",
-        source: product.merchant?.name || "Unknown",
-        rating: parseFloat(product.rating) || 0,
-        reviews: parseInt(product.reviews) || 0,
-        delivery: product.delivery || "اطلاعات ارسال موجود نیست",
-      })
+    // Process results with translation
+    const processedProducts = await Promise.all(
+      (shoppingResults.shopping_results || []).map(
+        async (product: any, index: number) => {
+          // Clean and validate text first
+          let title = product.title || "";
+          let description = product.description || "";
+
+          // Clean text to remove JSON-like structures
+          if (title) {
+            title = title
+              .replace(
+                /\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*,[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g,
+                ""
+              )
+              .replace(/\{[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+              .replace(/\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+              .replace(/"title"[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/"description"[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/title[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/description[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/["'""]/g, "")
+              .trim();
+          }
+
+          if (description) {
+            description = description
+              .replace(
+                /\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*,[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g,
+                ""
+              )
+              .replace(/\{[\s]*"description"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+              .replace(/\{[\s]*"title"[\s]*:[\s]*"[^"]*"[\s]*\}/g, "")
+              .replace(/"title"[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/"description"[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/title[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/description[\s]*:[\s]*"[^"]*"/g, "")
+              .replace(/["'""]/g, "")
+              .trim();
+          }
+
+          // If description still contains JSON-like content, use title
+          if (
+            description &&
+            (description.includes('"title"') ||
+              description.includes('"description"') ||
+              description.includes("title:") ||
+              description.includes("description:"))
+          ) {
+            description = title || "توضیحات محصول";
+          }
+
+          // If description is empty, use title
+          if (!description && title) {
+            description = title;
+          }
+
+          return {
+            id: product.product_id || `product-${Date.now()}-${index}`,
+            title: title,
+            originalTitle: product.title || "",
+            price:
+              parseFloat(
+                product.price?.replace(/[^\d.,]/g, "").replace(",", ".")
+              ) || 0,
+            originalPrice: product.original_price
+              ? parseFloat(
+                  product.original_price
+                    .replace(/[^\d.,]/g, "")
+                    .replace(",", ".")
+                )
+              : null,
+            currency: product.price?.replace(/[\d.,]/g, "").trim() || "TL",
+            image: product.thumbnail || "",
+            description: description,
+            originalDescription: product.description || "",
+            link: product.link || "",
+            googleShoppingLink: product.link || "",
+            source: product.merchant?.name || "Unknown",
+            rating: parseFloat(product.rating) || 0,
+            reviews: parseInt(product.reviews) || 0,
+            delivery: product.delivery || "اطلاعات ارسال موجود نیست",
+          };
+        }
+      )
     );
 
     return NextResponse.json({
